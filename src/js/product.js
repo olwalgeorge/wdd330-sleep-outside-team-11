@@ -8,6 +8,9 @@ function addProductToCart(product) {
   // Check if cart exists and is an array
   if (!cart) {
     cart = [];
+  } else if (!Array.isArray(cart)) {
+    // convert cart into an array if cart exists but is not an array
+    cart = [cart]; 
   }
   // Add the new product to the cart array
   cart.push(product);

@@ -7,7 +7,7 @@ function renderCartContents() {
     document.querySelector(".product-list").innerHTML = htmlItems.join("");
   } else {
     document.querySelector(".product-list").innerHTML =
-      '<li class="cart-empty">Your cart is empty</li>';
+      "<li class=\"cart-empty\">Your cart is empty</li>";
   }
 }
 

@@ -11,11 +11,12 @@ function renderCartContents() {
   }
 }
 
-function cartItemTemplate(item) {
+function cartItemTemplate(item) {  // Fix image path by converting relative path to absolute path
+  const imagePath = item.Image.replace("../", "/");
   const newItem = `<li class="cart-card divider">
   <a href="#" class="cart-card__image">
     <img
-      src="${item.Image}"
+      src="${imagePath}"
       alt="${item.Name}"
     />
   </a>

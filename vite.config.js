@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: "src/",
+  publicDir: "../public",
 
   build: {
     outDir: "../dist",
@@ -25,6 +26,8 @@ export default defineConfig({
           "src/product_pages/northface-talus-4.html",
         ),
       },
-    },
+    },    // Ensure static assets are copied to dist
+    assetsInclude: ["**/*.json", "**/*.svg"],
+    copyPublicDir: true,
   },
 });

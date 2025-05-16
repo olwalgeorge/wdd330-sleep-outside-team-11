@@ -21,3 +21,15 @@ export function setClick(selector, callback) {
   });
   qs(selector).addEventListener("click", callback);
 }
+
+// Function to get parameters from the URL
+export function getParam(param) {
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  return urlParams.get(param);
+}
+
+// Format currency
+export function formatCurrency(amount) {
+  return `$${amount.toFixed(2)}`;
+}

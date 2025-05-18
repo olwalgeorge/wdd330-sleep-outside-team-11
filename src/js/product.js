@@ -34,4 +34,4 @@ document
 const productId = getParam("product"); // Fixed typo in function name (getparam -> getParam)
 const dataSource = new ProductData("tents");
 const productDetails = new ProductDetails(productId, dataSource); // Renamed variable to avoid shadowing
-productDetails.init();
+productDetails.init()}

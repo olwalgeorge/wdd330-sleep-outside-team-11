@@ -6,8 +6,8 @@ function renderCartContents() {
     const htmlItems = cartItems.map((item) => cartItemTemplate(item));
     document.querySelector(".product-list").innerHTML = htmlItems.join("");
   } else {
-    document.querySelector(".product-list").innerHTML = 
-      "<li class=\"cart-empty\">Your cart is empty</li>";
+    document.querySelector(".product-list").innerHTML =
+      '<li class="cart-empty">Your cart is empty</li>';
   }
 }
 

@@ -1,7 +1,6 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, getParam } from "./utils.mjs"; // Added getParam import
 import ProductData from "./ProductData.mjs";
-
-const dataSource = new ProductData("tents");
+import ProductDetails from "./ProductDetails.mjs";
 
 function addProductToCart(product) {
   let cart = getLocalStorage("so-cart");
@@ -17,7 +16,10 @@ function addProductToCart(product) {
   // Save the updated cart back to localStorage
   setLocalStorage("so-cart", cart);
 }
+
 // add to cart button event handler
+async function addToCartHandler(e) {
+  const product = await dataSource.findProductById(e.target.dataset.id); // Renamed variable to avoid shadowing
 async function addToCartHandler(e) {
   const product = await dataSource.findProductById(e.target.dataset.id);
   addProductToCart(product);
@@ -27,3 +29,9 @@ async function addToCartHandler(e) {
 document
   .getElementById("addToCart")
   .addEventListener("click", addToCartHandler);
+
+// get the product id from the URL
+const productId = getParam("product"); // Fixed typo in function name (getparam -> getParam)
+const dataSource = new ProductData("tents");
+const productDetails = new ProductDetails(productId, dataSource); // Renamed variable to avoid shadowing
+productDetails.init();

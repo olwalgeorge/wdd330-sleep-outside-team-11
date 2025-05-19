@@ -26,7 +26,7 @@ export default defineConfig({
           "src/product_pages/northface-talus-4.html",
         ),
       },
-    },    // Ensure static assets are copied to dist
+    }, // Ensure static assets are copied to dist
     assetsInclude: ["**/*.json", "**/*.svg"],
     copyPublicDir: true,
   },

@@ -1,0 +1,54 @@
+[33mcommit 25cba8af93f982020f064dfdb5719173fd5c9afd[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m
+Merge: 42736d8 aff50a2
+Author: Dhamie07 <okpewodamilola@gmail.com>
+Date:   Sat May 17 13:57:56 2025 +0100
+
+    Merge branch 'main' of https://github.com/olwalgeorge/wdd330-sleep-outside-team-11
+
+[1mdiff --cc README.md[m
+[1mindex 00ae1e2,f632c0e..441908e[m
+[1m--- a/README.md[m
+[1m+++ b/README.md[m
+[36m@@@ -16,14 -17,11 +17,16 @@@[m
+  [m
+  - `npm run lint` to run ESLint against your code to find errors.[m
+  - `npm run format` to run Prettier to automatically format your code.[m
+[31m- - `npm run start` starts up a local server and updates on any JS or CSS/SCSS [m
+[32m+ - `npm run start` starts up a local server and updates on any JS or CSS/SCSS[m
+  - `npm run build` to build final files when you are ready to turn in.[m
+  [m
+[32m++<<<<<<< HEAD[m
+[32m +### URL for the team site project[m
+[32m +- https://visionary-parfait-201f25.netlify.app/[m
+[32m++=======[m
+[32m+ https://visionary-parfait-201f25.netlify.app/[m
+[32m++>>>>>>> aff50a220cdf5eb73e21a67302bd43ef1e841d18[m
+  [m
+  ---[m
+[31m- _BYU-Pathway Worldwide improves lives through access to spiritually based, online affordable higher education. Its mission is to develop disciples of Jesus Christ who are leaders in their homes, the Church, and their communities._[m
+[31m- [m
+[31m- [m
+  [m
+[32m+ _BYU-Pathway Worldwide improves lives through access to spiritually based, online affordable higher education. Its mission is to develop disciples of Jesus Christ who are leaders in their homes, the Church, and their communities._[m
+[1mdiff --cc package.json[m
+[1mindex 019ac3a,93c8730..4250ca0[m
+[1m--- a/package.json[m
+[1m+++ b/package.json[m
+[36m@@@ -2,12 -2,14 +2,13 @@@[m
+    "name": "outside",[m
+    "version": "2.0.0",[m
+    "description": "Boilerplate for WDD 330 SleepOutside project",[m
+[31m -  "main": "main.js",[m
+[31m -  "scripts": {[m
+[32m +  "main": "main.js",  "scripts": {[m
+      "start": "vite",[m
+[31m -    "build": "vite build --emptyOutDir",[m
+[32m +    "build": "vite build --emptyOutDir && cp -r ./src/json ./dist/ && cp -r ./src/images ./dist/",[m
+      "lint": "eslint *.js src/**/*.js",[m
+      "format": "prettier --ignore-path ./.gitignore --write \"./**/*.{html,json,js,ts,css}\"",[m
+[31m-     "test": "jest"[m
+[32m+     "test": "jest",[m
+[32m+     "preview": "vite preview"[m
+    },[m
+    "author": "Shane Thompson",[m
+    "license": "ISC",[m

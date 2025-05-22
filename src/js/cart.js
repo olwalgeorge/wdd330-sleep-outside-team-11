@@ -28,6 +28,7 @@ function renderCartContents() {
       document.querySelector(".products").appendChild(totalDiv);
     }
   } else {
+
     productListElement.innerHTML = 
       "<li class=\"cart-empty\">Your cart is empty</li>";
     
@@ -36,6 +37,10 @@ function renderCartContents() {
     if (totalElement) {
       totalElement.remove();
     }
+
+    document.querySelector(".product-list").innerHTML =
+      '<li class="cart-empty">Your cart is empty</li>';
+
   }
 }
 

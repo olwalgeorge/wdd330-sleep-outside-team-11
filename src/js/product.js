@@ -1,6 +1,12 @@
+
 import { getLocalStorage, setLocalStorage } from "./utils.mjs";
 import { findProductById } from "./ProductData.mjs";
 import { renderProductDetails } from "./ProductDetails.mjs";
+
+import { getLocalStorage, setLocalStorage, getParam } from "./utils.mjs"; // Added getParam import
+import ProductData from "./ProductData.mjs";
+import ProductDetails from "./ProductDetails.mjs";
+
 
 function addProductToCart(product) {
   let cart = getLocalStorage("so-cart");
@@ -9,16 +15,22 @@ function addProductToCart(product) {
     cart = [];
   } else if (!Array.isArray(cart)) {
     // convert cart into an array if cart exists but is not an array
-    cart = [cart]; 
+    cart = [cart];
   }
   // Add the new product to the cart array
   cart.push(product);
   // Save the updated cart back to localStorage
   setLocalStorage("so-cart", cart);
 }
+
 // add to cart button event handler
+
 async function addToCartHandler(e) { 
   const product = await findProductById(e.target.dataset.id); 
+
+async function addToCartHandler(e) {
+  const product = await dataSource.findProductById(e.target.dataset.id); // Renamed variable to avoid shadowing
+
   addProductToCart(product);
 }
 
@@ -27,7 +39,15 @@ document
   .getElementById("addToCart")
   .addEventListener("click", addToCartHandler);
 
+
 // Load product details when the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
   renderProductDetails();
 });
+
+// get the product id from the URL
+const productId = getParam("product"); // Fixed typo in function name (getparam -> getParam)
+const dataSource = new ProductData("tents");
+const productDetails = new ProductDetails(productId, dataSource); // Renamed variable to avoid shadowing
+productDetails.init();
+

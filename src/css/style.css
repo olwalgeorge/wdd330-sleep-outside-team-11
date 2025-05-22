@@ -261,3 +261,26 @@ footer {
   font-size: var(--small-font);
   padding: 1em;
 }
+
+.cart-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 1rem 0;
+  border-top: 1px solid var(--light-grey);
+  margin-top: 1rem;
+}
+
+.cart-total {
+  font-size: var(--large-font);
+  font-weight: bold;
+  color: var(--tertiary-color);
+  margin-right: 1rem;
+}
+
+.cart-empty {
+  display: block;
+  padding: 2rem 0;
+  text-align: center;
+  font-size: var(--large-font);
+  color: var(--dark-grey);
+}

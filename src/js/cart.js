@@ -4,17 +4,20 @@ function calculateCartTotal(cartItems) {
   if (!cartItems || cartItems.length === 0) {
     return 0;
   }
-    return cartItems.reduce((total, item) => total + parseFloat(item.FinalPrice), 0);
+  return cartItems.reduce(
+    (total, item) => total + parseFloat(item.FinalPrice),
+    0,
+  );
 }
 
 function renderCartContents() {
   const cartItems = getLocalStorage("so-cart");
   const productListElement = document.querySelector(".product-list");
-  
+
   if (cartItems && cartItems.length > 0) {
     const htmlItems = cartItems.map((item) => cartItemTemplate(item));
     productListElement.innerHTML = htmlItems.join("");
-    
+
     // Calculate and display the total
     const total = calculateCartTotal(cartItems);
     const totalElement = document.querySelector(".cart-total");
@@ -28,9 +31,9 @@ function renderCartContents() {
       document.querySelector(".products").appendChild(totalDiv);
     }
   } else {
-    productListElement.innerHTML = 
+    productListElement.innerHTML =
       "<li class=\"cart-empty\">Your cart is empty</li>";
-    
+
     // Remove total if cart is empty
     const totalElement = document.querySelector(".cart-footer");
     if (totalElement) {

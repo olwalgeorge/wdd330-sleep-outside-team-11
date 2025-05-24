@@ -9,7 +9,7 @@ function addProductToCart(product) {
     cart = [];
   } else if (!Array.isArray(cart)) {
     // convert cart into an array if cart exists but is not an array
-    cart = [cart]; 
+    cart = [cart];
   }
   // Add the new product to the cart array
   cart.push(product);
@@ -17,8 +17,8 @@ function addProductToCart(product) {
   setLocalStorage("so-cart", cart);
 }
 // add to cart button event handler
-async function addToCartHandler(e) { 
-  const product = await findProductById(e.target.dataset.id); 
+async function addToCartHandler(e) {
+  const product = await findProductById(e.target.dataset.id);
   addProductToCart(product);
 }
 

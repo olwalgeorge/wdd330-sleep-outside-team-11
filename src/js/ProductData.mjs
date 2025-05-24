@@ -1,23 +1,20 @@
-function convertToJson(res) {
-  if (res.ok) {
-    return res.json();
-  } else {
-    throw new Error("Bad Response");
-  }
+const baseURL = "/json";
+
+// Function to fetch product data from the json file
+async function fetchProductData(category = "tents") {
+  const response = await fetch(`${baseURL}/${category}.json`);
+  const data = await response.json();
+  return data;
 }
 
-export default class ProductData {
-  constructor(category) {
-    this.category = category;
-    this.path = `/json/${this.category}.json`;
-  }
-  getData() {
-    return fetch(this.path)      
-      .then(convertToJson)      
-      .then((data) => data);
-  }
-  async findProductById(id) {
-    const products = await this.getData();      
-    return products.find((item) => item.Id === id);
-  }
+// Function to find a specific product by id
+export async function findProductById(id) {
+  const products = await fetchProductData();
+  return products.find((item) => item.Id === id);
+}
+
+// Function to get a list of products in a category
+export async function getProductsByCategory(category = "tents") {
+  const products = await fetchProductData(category);
+  return products;
 }

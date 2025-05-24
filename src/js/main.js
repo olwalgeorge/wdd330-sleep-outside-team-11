@@ -1,21 +1,26 @@
-
 import { renderProductList } from "./ProductListing.mjs";
+import ProductData from "./ProductData.mjs";
+import Alert from "./alert";
+import ProductList from "./ProductList.mjs";
+import { loadHeaderFooter } from "../js/utils.mjs"; // Import the function to load header and footer templates
+loadHeaderFooter(); // Load header and footer templates
 
+// Load the header and footer, then initialize the rest of the page
 document.addEventListener("DOMContentLoaded", () => {
+  loadHeaderFooter(); // Load header and footer
+
   // Render the list of tent products when the page loads
   renderProductList(".product-list", "tents");
 
-import ProductData from "./ProductData.mjs"; // Import the ProductData module
-import Alert from "./alert";
-const category = "tents";
-const listElement = document.querySelector(".product-list"); // Select the product list element
+  const category = "tents";
+  const listElement = document.querySelector(".product-list");
 
-const dataSource = new ProductData(); // Create an instance of ProductData
-const productList = new productList(category, dataSource, listElement);
-productList.init();
+  const dataSource = new ProductData();
+  const productList = new ProductList(category, dataSource, listElement);
+  productList.init();
 
-const alert = new Alert(); // Create an instance of Alert
-alert.fetchAlerts().then(() => {
-  alert.renderAlerts(); // Render the alerts after fetching them
-
+  const alert = new Alert();
+  alert.fetchAlerts().then(() => {
+    alert.renderAlerts();
+  });
 });

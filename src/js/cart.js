@@ -1,4 +1,4 @@
-import { getLocalStorage, formatCurrency } from "./utils.mjs";
+import { getLocalStorage, formatCurrency, loadHeaderFooter } from "./utils.mjs";
 
 function calculateCartTotal(cartItems) {
   if (!cartItems || cartItems.length === 0) {
@@ -58,4 +58,7 @@ function cartItemTemplate(item) {
   return newItem;
 }
 
-renderCartContents();
+document.addEventListener("DOMContentLoaded", () => {
+  loadHeaderFooter();
+  renderCartContents();
+});

@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, loadHeaderFooter } from "./utils.mjs";
 import { findProductById } from "./ProductData.mjs";
 import { renderProductDetails } from "./ProductDetails.mjs";
 
@@ -29,5 +29,6 @@ document
 
 // Load product details when the DOM is ready
 document.addEventListener("DOMContentLoaded", () => {
+  loadHeaderFooter();
   renderProductDetails();
 });

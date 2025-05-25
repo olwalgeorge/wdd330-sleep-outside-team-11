@@ -1,4 +1,4 @@
-import { getLocalStorage, formatCurrency, loadHeaderFooter, updateCartCount } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, formatCurrency, loadHeaderFooter, updateCartCount } from "./utils.mjs";
 
 function calculateCartTotal(cartItems) {
   if (!cartItems || cartItems.length === 0) {
@@ -14,6 +14,9 @@ function renderCartContents() {
   if (cartItems && cartItems.length > 0) {
     const htmlItems = cartItems.map((item) => cartItemTemplate(item));
     productListElement.innerHTML = htmlItems.join("");
+    
+    // Add event listeners to remove buttons
+    addRemoveListeners();
     
     // Calculate and display the total
     const total = calculateCartTotal(cartItems);
@@ -47,6 +50,9 @@ function cartItemTemplate(item) {
   }
   
   const newItem = `<li class="cart-card divider">
+  <button class="cart-card__remove" data-id="${item.Id}" aria-label="Remove ${item.Name} from cart">
+    <span>×</span>
+  </button>
   <a href="/product_pages/index.html?product=${item.Id}" class="cart-card__image">
     <img
       src="${imagePath}"
@@ -62,6 +68,35 @@ function cartItemTemplate(item) {
 </li>`;
 
   return newItem;
+}
+
+function removeFromCart(productId) {
+  let cartItems = getLocalStorage("so-cart");
+  if (cartItems) {
+    // Find the index of the first item with the matching ID
+    const itemIndex = cartItems.findIndex(item => item.Id === productId);
+    if (itemIndex > -1) {
+      // Remove the item from the cart
+      cartItems.splice(itemIndex, 1);
+      // Save the updated cart back to localStorage
+      setLocalStorage("so-cart", cartItems);
+      // Update cart count
+      updateCartCount();
+      // Re-render the cart contents
+      renderCartContents();
+    }
+  }
+}
+
+function addRemoveListeners() {
+  const removeButtons = document.querySelectorAll(".cart-card__remove");
+  removeButtons.forEach(button => {
+    button.addEventListener("click", (e) => {
+      e.preventDefault();
+      const productId = e.currentTarget.dataset.id;
+      removeFromCart(productId);
+    });
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {

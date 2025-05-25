@@ -521,4 +521,17 @@ footer {
   color: var(--tertiary-color);
 }
 
+/* Product detail discount styles */
+.product-detail__price-container {
+  display: flex;
+  flex-direction: column;
+  margin: 0.5rem 0;
+}
+
+.product-detail__discount-badge {
+  position: static;
+  display: inline-block;
+  margin: 0.5rem 0;
+  width: fit-content;
+}
 /* End discount indicator styles */

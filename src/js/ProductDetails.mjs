@@ -28,7 +28,45 @@ export async function renderProductDetails() {
     
     document.getElementById("productImage").src = imagePath;
     document.getElementById("productImage").alt = product.Name;
-    document.getElementById("productFinalPrice").textContent = `$${product.FinalPrice}`;
+    
+    // Check if product is discounted (FinalPrice < SuggestedRetailPrice)
+    const isDiscounted = product.FinalPrice < product.SuggestedRetailPrice;
+    
+    if (isDiscounted) {
+      // Create a price container div to hold both prices
+      const priceContainer = document.createElement("div");
+      priceContainer.className = "product-detail__price-container";
+      
+      // Create and add the original price element
+      const originalPrice = document.createElement("p");
+      originalPrice.className = "product-card__original-price";
+      originalPrice.textContent = `$${product.SuggestedRetailPrice.toFixed(2)}`;
+      priceContainer.appendChild(originalPrice);
+      
+      // Create and add the final price element
+      const finalPrice = document.createElement("p");
+      finalPrice.className = "product-card__price";
+      finalPrice.textContent = `$${product.FinalPrice.toFixed(2)}`;
+      priceContainer.appendChild(finalPrice);
+      
+      // Create discount badge
+      const discountAmount = product.SuggestedRetailPrice - product.FinalPrice;
+      const discountPercentage = Math.round((discountAmount / product.SuggestedRetailPrice) * 100);
+      const discountBadge = document.createElement("div");
+      discountBadge.className = "discount-badge product-detail__discount-badge";
+      discountBadge.textContent = `Save ${discountPercentage}% ($${discountAmount.toFixed(2)})`;
+      
+      // Get the original price element and replace it with our container
+      const priceElement = document.getElementById("productFinalPrice");
+      priceElement.replaceWith(priceContainer);
+      
+      // Add the discount badge to the product detail section
+      const productDetailSection = document.querySelector(".product-detail");
+      productDetailSection.insertBefore(discountBadge, document.getElementById("productImage"));
+    } else {
+      // No discount, just show the final price
+      document.getElementById("productFinalPrice").textContent = `$${product.FinalPrice.toFixed(2)}`;
+    }
     
     // Handle color display if available
     if (product.Colors && product.Colors.length > 0) {

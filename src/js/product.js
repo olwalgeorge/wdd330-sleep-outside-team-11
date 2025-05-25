@@ -27,8 +27,51 @@ document
   .getElementById("addToCart")
   .addEventListener("click", addToCartHandler);
 
+// Helper function to determine product category from product data
+function determineProductCategory(product) {
+  // This is a simple implementation that could be enhanced with more detailed logic
+  const name = product.Name.toLowerCase();
+  
+  if (name.includes("tent")) return "tents";
+  if (name.includes("pack") || name.includes("backpack")) return "backpacks";
+  if (name.includes("sleeping") || name.includes("bag")) return "sleeping-bags";
+  if (name.includes("hammock")) return "hammocks";
+  
+  // Default to tents if we can't determine
+  return "tents";
+}
+
 // Load product details when the DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   loadHeaderFooter();
-  renderProductDetails();
+  await renderProductDetails();
+  
+  // Set up breadcrumb navigation
+  const productId = new URLSearchParams(window.location.search).get("product");
+  if (productId) {
+    try {
+      const product = await findProductById(productId);
+      if (product) {
+        // Set the product name in the breadcrumb
+        document.getElementById("productBreadcrumb").textContent = product.Name;
+        
+        // Determine the category and set up the category link
+        const category = determineProductCategory(product);
+        const categoryLink = document.getElementById("categoryLink");
+        
+        let displayCategory = category;
+        if (category === "sleeping-bags") {
+          displayCategory = "Sleeping Bags";
+        } else {
+          // Capitalize first letter of the category
+          displayCategory = category.charAt(0).toUpperCase() + category.slice(1);
+        }
+        
+        categoryLink.textContent = displayCategory;
+        categoryLink.href = `/product-listing/index.html?category=${category}`;
+      }
+    } catch (error) {
+      // Silently handle error
+    }
+  }
 });

@@ -5,6 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
   // Load header and footer
   loadHeaderFooter();
   
-  // Render the list of tent products when the page loads
+  // Render a small sample of tent products on the home page
   renderProductList(".product-list", "tents");
 });

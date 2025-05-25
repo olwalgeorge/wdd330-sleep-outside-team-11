@@ -459,3 +459,50 @@ footer {
   text-align: right;
   margin-top: 1rem;
 }
+
+/* Discount indicator styles */
+.product-card--on-sale {
+  position: relative;
+  border: 1px solid var(--tertiary-color);
+}
+
+.discount-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: var(--tertiary-color);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  font-size: var(--small-font);
+  font-weight: bold;
+  border-radius: 4px;
+  z-index: 1;
+}
+
+.product-card__price-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.25rem;
+}
+
+.product-card__original-price {
+  color: var(--dark-grey);
+  text-decoration: line-through;
+  font-size: var(--small-font);
+  margin: 0;
+  padding: 0;
+}
+
+.product-card__price {
+  color: var(--tertiary-color);
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+}
+
+.product-card--on-sale .product-card__price {
+  color: var(--tertiary-color);
+}
+
+/* End discount indicator styles */

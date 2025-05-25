@@ -36,13 +36,33 @@ export async function renderProductList(selector, category) {
         ? `/product_pages/index.html?product=${product.Id}` 
         : `product_pages/index.html?product=${product.Id}`;
       
+      // Check if product is discounted (FinalPrice < SuggestedRetailPrice)
+      const isDiscounted = product.FinalPrice < product.SuggestedRetailPrice;
+      
+      // Format the prices with exactly two decimal places
+      const finalPrice = product.FinalPrice.toFixed(2);
+      
+      // Create discount badge HTML if discounted
+      const discountBadge = isDiscounted 
+        ? `<div class="discount-badge">On Sale</div>` 
+        : "";
+      
+      // Calculate and display original price if discounted
+      const originalPriceDisplay = isDiscounted 
+        ? `<p class="product-card__original-price">$${product.SuggestedRetailPrice.toFixed(2)}</p>` 
+        : "";
+      
       element.innerHTML += `
-        <li class="product-card">
+        <li class="product-card ${isDiscounted ? "product-card--on-sale" : ""}">
           <a href="${productUrl}">
+            ${discountBadge}
             <img src="${imagePath}" alt="${product.Name}" />
             <h3 class="card__brand">${product.Brand?.Name || "Brand"}</h3>
             <h2 class="card__name">${product.NameWithoutBrand || product.Name}</h2>
-            <p class="product-card__price">$${product.FinalPrice}</p>
+            <div class="product-card__price-container">
+              ${originalPriceDisplay}
+              <p class="product-card__price">$${finalPrice}</p>
+            </div>
           </a>
         </li>
       `;

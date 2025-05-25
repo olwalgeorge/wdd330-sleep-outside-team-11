@@ -1,4 +1,4 @@
-import { getLocalStorage, formatCurrency, loadHeaderFooter } from "./utils.mjs";
+import { getLocalStorage, formatCurrency, loadHeaderFooter, updateCartCount } from "./utils.mjs";
 
 function calculateCartTotal(cartItems) {
   if (!cartItems || cartItems.length === 0) {
@@ -67,4 +67,6 @@ function cartItemTemplate(item) {
 document.addEventListener("DOMContentLoaded", () => {
   loadHeaderFooter();
   renderCartContents();
+  // Make sure cart count is updated when cart page loads
+  updateCartCount();
 });

@@ -1,4 +1,4 @@
-import { loadHeaderFooter, getLocalStorage, formatCurrency } from "./utils.mjs";
+import { loadHeaderFooter, getLocalStorage, formatCurrency, updateCartCount } from "./utils.mjs";
 
 // Display order summary from cart items
 function displayOrderSummary() {
@@ -39,4 +39,6 @@ function displayOrderSummary() {
 document.addEventListener("DOMContentLoaded", () => {
   loadHeaderFooter();
   displayOrderSummary();
+  // Update cart count
+  updateCartCount();
 });

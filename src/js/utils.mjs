@@ -34,6 +34,26 @@ export function formatCurrency(amount) {
   return `$${amount.toFixed(2)}`;
 }
 
+// Get the number of items in the cart
+export function getCartItemCount() {
+  const cartItems = getLocalStorage("so-cart");
+  return cartItems ? cartItems.length : 0;
+}
+
+// Update the cart count display
+export function updateCartCount() {
+  const cartCountElement = document.getElementById("cart-count");
+  if (cartCountElement) {
+    const count = getCartItemCount();
+    if (count > 0) {
+      cartCountElement.textContent = count;
+      cartCountElement.style.display = "block";
+    } else {
+      cartCountElement.style.display = "none";
+    }
+  }
+}
+
 // render template with data if available
 export function renderWithTemplate(template, parentElement, data, callback) {
   parentElement.innerHTML = template;
@@ -59,4 +79,7 @@ export async function loadHeaderFooter() {
 
   renderWithTemplate(headerTemplate, headerElement);
   renderWithTemplate(footerTemplate, footerElement);
+  
+  // Update cart count after header is loaded
+  updateCartCount();
 }

@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage, loadHeaderFooter } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, loadHeaderFooter, updateCartCount } from "./utils.mjs";
 import { findProductById } from "./ProductData.mjs";
 import { renderProductDetails } from "./ProductDetails.mjs";
 
@@ -15,6 +15,8 @@ function addProductToCart(product) {
   cart.push(product);
   // Save the updated cart back to localStorage
   setLocalStorage("so-cart", cart);
+  // Update the cart count display
+  updateCartCount();
 }
 // add to cart button event handler
 async function addToCartHandler(e) { 

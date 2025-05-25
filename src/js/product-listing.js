@@ -1,6 +1,5 @@
-import { loadHeaderFooter } from "./utils.mjs";
+import { loadHeaderFooter, updateCartCount, getParam } from "./utils.mjs";
 import { renderProductList } from "./ProductListing.mjs";
-import { getParam } from "./utils.mjs";
 
 document.addEventListener("DOMContentLoaded", () => {
   // Load header and footer
@@ -22,7 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("category-title").textContent = displayCategory;
   document.getElementById("category-name").textContent = displayCategory;
   document.title = `Sleep Outside | ${displayCategory}`;
-  
-  // Render the list of products for the specified category
+    // Render the list of products for the specified category
   renderProductList(".product-list", category);
+  
+  // Update cart count display
+  updateCartCount();
 });

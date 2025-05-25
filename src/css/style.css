@@ -133,6 +133,22 @@ button {
 
 /* End cart icon styles */
 
+/* Cart count indicator */
+.cart-count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: var(--tertiary-color);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: bold;
+  border-radius: 50%;
+  padding: 0.1rem 0.4rem;
+  min-width: 1rem;
+  text-align: center;
+  z-index: 2;
+}
+
 .mission {
   position: absolute;
   top: 1rem;

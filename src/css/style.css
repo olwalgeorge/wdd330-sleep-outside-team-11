@@ -156,6 +156,15 @@ button {
   padding: 1rem;
 }
 
+/* Add specific styling for section headings */
+.products h2 {
+  font-family: var(--font-body);
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 1rem;
+  color: var(--dark-grey);
+}
+
 .product-list {
   display: flex;
   flex-flow: row wrap;
@@ -369,4 +378,84 @@ footer {
 
 .breadcrumbs a:hover {
   text-decoration: underline;
+}
+
+/* Category title styles */
+#category-title {
+  font-family: var(--font-body);
+  font-weight: bold;
+  font-size: 1.5em;
+  margin-bottom: 1rem;
+  color: var(--dark-grey);
+}
+
+#category-name {
+  font-family: var(--font-body);
+  font-weight: normal;
+}
+
+/* Checkout styles */
+.checkout-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+@media screen and (min-width: 768px) {
+  .checkout-container {
+    flex-direction: row;
+  }
+  
+  .checkout-form {
+    flex: 2;
+  }
+  
+  .order-summary {
+    flex: 1;
+  }
+}
+
+.order-summary {
+  border: 1px solid var(--light-grey);
+  border-radius: 4px;
+  padding: 1rem;
+  background-color: #f9f9f9;
+}
+
+.order-summary h3 {
+  margin-top: 0;
+  border-bottom: 1px solid var(--light-grey);
+  padding-bottom: 0.5rem;
+  font-family: var(--font-body);
+}
+
+.order-summary ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--light-grey);
+}
+
+.summary-item img {
+  width: 30px;
+  height: 30px;
+  object-fit: cover;
+}
+
+.summary-item span:nth-child(2) {
+  flex: 1;
+}
+
+.order-total {
+  font-weight: bold;
+  text-align: right;
+  margin-top: 1rem;
 }

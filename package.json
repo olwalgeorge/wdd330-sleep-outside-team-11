@@ -2,7 +2,8 @@
   "name": "outside",
   "version": "2.0.0",
   "description": "Boilerplate for WDD 330 SleepOutside project",
-  "main": "main.js",  "scripts": {
+  "main": "main.js",
+  "scripts": {
     "start": "vite",
     "build": "vite build --emptyOutDir && cp -r ./src/json ./dist/ && cp -r ./src/images ./dist/",
     "lint": "eslint *.js src/**/*.js",

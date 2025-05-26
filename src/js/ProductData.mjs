@@ -1,10 +1,15 @@
-const baseURL = "/json";
+// const baseURL = "/json"; // Base URL for the JSON files
+// API endpoint to fetch product data
+const baseURL = import.meta.env.VITE_SERVER_URL;
 
-// Function to fetch product data from the json file
-async function fetchProductData(category = "tents") {
-  const response = await fetch(`${baseURL}/${category}.json`);
-  const data = await response.json();
-  return data;
+// Function to fetch product data from the server
+export default class ProductData {
+  async getDAta(category) {
+    // Fetch product data based on the category
+    const response = await fetch(`${baseURL}products/search/${category} `); // Fetch the product data from the server
+    const data = await convertToJson(response); // Convert the response to JSON
+    return data.Result; // Return the Result array from the JSON data
+  }
 }
 
 // Function to find a specific product by id

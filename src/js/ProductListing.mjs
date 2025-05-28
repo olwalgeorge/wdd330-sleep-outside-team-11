@@ -1,7 +1,7 @@
-// ProductListing.mjs - Module for rendering product lists on index page
+
 import { getProductsByCategory } from "./ProductData.mjs";
 
-export async function renderProductList(selector, category) {
+export async function renderProductList(selector, category, sort = "name-asc") {
   try {
     // Get the element to insert products into
     const element = document.querySelector(selector);
@@ -23,7 +23,23 @@ export async function renderProductList(selector, category) {
       element.innerHTML = "<li class='no-products'>No products found in this category</li>";
       return;
     }
-    
+
+    // Sort products
+    products.sort((a, b) => {
+      switch (sort) {
+        case "name-asc":
+          return (a.NameWithoutBrand || a.Name).localeCompare(b.NameWithoutBrand || b.Name);
+        case "name-desc":
+          return (b.NameWithoutBrand || b.Name).localeCompare(a.NameWithoutBrand || a.Name);
+        case "price-asc":
+          return a.FinalPrice - b.FinalPrice;
+        case "price-desc":
+          return b.FinalPrice - a.FinalPrice;
+        default:
+          return 0;
+      }
+    });
+
     // Create HTML for each product
     products.forEach(product => {
       // Fix image paths if needed
@@ -66,7 +82,8 @@ export async function renderProductList(selector, category) {
           </a>
         </li>
       `;
-    });  } catch (error) {
+    });
+  } catch (error) {
     // Handle error silently without console.error
     const element = document.querySelector(selector);
     if (element) {

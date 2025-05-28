@@ -241,6 +241,41 @@ button {
   grid-column: 3;
 }
 
+/* Container for the category items - lays them out in a flexible row with spacing */
+.product-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+}
+
+.product-categories li {
+  text-align: center;
+}
+
+.product-categories a {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: transform 0.2s;
+}
+
+.product-categories a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.product-categories img {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 0.5rem;
+}
+
+
 @media screen and (min-width: 500px) {
   body {
     max-width: 1080px;

@@ -1,40 +1,28 @@
-// wrapper for querySelector...returns matching element
-export function qs(selector, parent = document) {
-  return parent.querySelector(selector);
-}
-// or a more concise version if you are into that sort of thing:
-// export const qs = (selector, parent = document) => parent.querySelector(selector);
-
-// retrieve data from localstorage
-export function getLocalStorage(key) {
-  return JSON.parse(localStorage.getItem(key));
-}
-// save data to local storage
-export function setLocalStorage(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
-}
-// set a listener for both touchend and click
-export function setClick(selector, callback) {
-  qs(selector).addEventListener("touchend", (event) => {
-    event.preventDefault();
-    callback();
-  });
-  qs(selector).addEventListener("click", callback);
-}
-
-
-// Function to get parameters from the URL
-
-
 export function getParam(param) {
-  const queryString = window.location.search;
-  const urlParams = new URLSearchParams(queryString);
+  const urlParams = new URLSearchParams(window.location.search);
   return urlParams.get(param);
 }
 
-
-// Format currency
-export function formatCurrency(amount) {
-  return `$${amount.toFixed(2)}`;
+export async function loadHeaderFooter() {
+  // Load header
+  const header = document.getElementById("main-header");
+  if (header) {
+    const response = await fetch("/public/header.html");
+    if (response.ok) {
+      header.innerHTML = await response.text();
+    }
+  }
+  // Load footer
+  const footer = document.getElementById("main-footer");
+  if (footer) {
+    const response = await fetch("/public/footer.html");
+    if (response.ok) {
+      footer.innerHTML = await response.text();
+    }
+  }
 }
 
+export function updateCartCount() {
+  // Placeholder for cart count update logic
+  // Implement as needed based on cart storage
+}

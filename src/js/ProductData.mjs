@@ -1,25 +1,36 @@
-// const baseURL = "/json"; // Base URL for the JSON files
-// API endpoint to fetch product data
+// API base URL from environment variable
 const baseURL = import.meta.env.VITE_SERVER_URL;
 
-// Function to fetch product data from the server
+// Helper function to convert response to JSON safely
+async function convertToJson(response) {
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
+  }
+  return response.json();
+}
+
+// Fetch product data by category from API
+async function fetchProductData(category) {
+  const response = await fetch(`${baseURL}products/search/${category}`);
+  const data = await convertToJson(response);
+  return data.Result;
+}
+
 export default class ProductData {
-  async getDAta(category) {
-    // Fetch product data based on the category
-    const response = await fetch(`${baseURL}products/search/${category} `); // Fetch the product data from the server
-    const data = await convertToJson(response); // Convert the response to JSON
-    return data.Result; // Return the Result array from the JSON data
+  // Fetch product data by category
+  async getData(category) {
+    return await fetchProductData(category);
   }
 }
 
-// Function to find a specific product by id
+// Fetch product by id from API
 export async function findProductById(id) {
-  const products = await fetchProductData();
-  return products.find((item) => item.Id === id);
+  const response = await fetch(`${baseURL}product/${id}`);
+  const data = await convertToJson(response);
+  return data.Result;
 }
 
-// Function to get a list of products in a category
+// Fetch products by category from API
 export async function getProductsByCategory(category = "tents") {
-  const products = await fetchProductData(category);
-  return products;
+  return await fetchProductData(category);
 }

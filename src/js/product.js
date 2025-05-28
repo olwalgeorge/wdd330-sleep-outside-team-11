@@ -1,12 +1,11 @@
-
-import { getLocalStorage, setLocalStorage } from "./utils.mjs";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  loadHeaderFooter,
+  updateCartCount,
+} from "./utils.mjs";
 import { findProductById } from "./ProductData.mjs";
 import { renderProductDetails } from "./ProductDetails.mjs";
-
-import { getLocalStorage, setLocalStorage, getParam } from "./utils.mjs"; // Added getParam import
-import ProductData from "./ProductData.mjs";
-import ProductDetails from "./ProductDetails.mjs";
-
 
 function addProductToCart(product) {
   let cart = getLocalStorage("so-cart");
@@ -21,13 +20,12 @@ function addProductToCart(product) {
   cart.push(product);
   // Save the updated cart back to localStorage
   setLocalStorage("so-cart", cart);
+  // Update the cart count display
+  updateCartCount();
 }
-
 // add to cart button event handler
 async function addToCartHandler(e) {
-  const product = await dataSource.findProductById(e.target.dataset.id); // Renamed variable to avoid shadowing
-async function addToCartHandler(e) {
-  const product = await dataSource.findProductById(e.target.dataset.id);
+  const product = await findProductById(e.target.dataset.id);
   addProductToCart(product);
 }
 
@@ -36,14 +34,52 @@ document
   .getElementById("addToCart")
   .addEventListener("click", addToCartHandler);
 
+// Helper function to determine product category from product data
+function determineProductCategory(product) {
+  // This is a simple implementation that could be enhanced with more detailed logic
+  const name = product.Name.toLowerCase();
+
+  if (name.includes("tent")) return "tents";
+  if (name.includes("pack") || name.includes("backpack")) return "backpacks";
+  if (name.includes("sleeping") || name.includes("bag")) return "sleeping-bags";
+  if (name.includes("hammock")) return "hammocks";
+
+  // Default to tents if we can't determine
+  return "tents";
+}
 
 // Load product details when the DOM is ready
-document.addEventListener("DOMContentLoaded", () => {
-  renderProductDetails();
-});
+document.addEventListener("DOMContentLoaded", async () => {
+  loadHeaderFooter();
+  await renderProductDetails();
 
-// get the product id from the URL
-const productId = getParam("product"); // Fixed typo in function name (getparam -> getParam)
-const dataSource = new ProductData("tents");
-const productDetails = new ProductDetails(productId, dataSource); // Renamed variable to avoid shadowing
-productDetails.init()}
+  // Set up breadcrumb navigation
+  const productId = new URLSearchParams(window.location.search).get("product");
+  if (productId) {
+    try {
+      const product = await findProductById(productId);
+      if (product) {
+        // Set the product name in the breadcrumb
+        document.getElementById("productBreadcrumb").textContent = product.Name;
+
+        // Determine the category and set up the category link
+        const category = determineProductCategory(product);
+        const categoryLink = document.getElementById("categoryLink");
+
+        let displayCategory = category;
+        if (category === "sleeping-bags") {
+          displayCategory = "Sleeping Bags";
+        } else {
+          // Capitalize first letter of the category
+          displayCategory =
+            category.charAt(0).toUpperCase() + category.slice(1);
+        }
+
+        categoryLink.textContent = displayCategory;
+        categoryLink.href = `/product-listing/index.html?category=${category}`;
+      }
+    } catch (error) {
+      // Silently handle error
+    }
+  }
+});

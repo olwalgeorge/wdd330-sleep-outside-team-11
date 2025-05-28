@@ -1,81 +1,103 @@
-import { setLocalStorage, getParam } from "./utils.mjs";
-import ProductData from "./ProductData.mjs";
-import ProductList from "./ProductList.js";
-import { loadHeaderFooter, getParam } from "./utils.mjs";
+import { findProductById } from "./ProductData.mjs";
+import { getParam } from "./utils.mjs";
 
-export default class ProductDetails {
-  constructor(productId, dataSource) {
-    this.productId = productId;
-    this.product = {};
-    this.dataSource = dataSource; // Expecting an instance of ProductData
+export async function renderProductDetails() {
+  // Get the product id from URL parameter
+  const productId = getParam("product");
+  if (!productId) {
+    return;
   }
 
-  async init() {
-    // Load the product data using the API
-    this.product = await this.dataSource.getDataById(this.productId);
+  try {
+    // Get the product details from the data module
+    const product = await findProductById(productId);
 
-    // Render the product details on the page
-    this.renderProductDetails();
+    if (!product) {
+      return;
+    }
 
-    // Set up the Add to Cart button
-    document
-      .getElementById("addToCart")
-      .addEventListener("click", this.addProductToCart.bind(this));
+    // Render the product details in the DOM
+    document.getElementById("productName").textContent = product.Name;
+    document.getElementById("productNameWithoutBrand").textContent =
+      product.NameWithoutBrand || "";
+
+    // Handle different image formats from the API
+    let imagePath = product.Images?.PrimaryLarge || product.Image;
+    if (imagePath && imagePath.includes("../images")) {
+      imagePath = imagePath.replace("../images", "/images");
+    }
+
+    document.getElementById("productImage").src = imagePath;
+    document.getElementById("productImage").alt = product.Name;
+
+    // Check if product is discounted (FinalPrice < SuggestedRetailPrice)
+    const isDiscounted = product.FinalPrice < product.SuggestedRetailPrice;
+
+    if (isDiscounted) {
+      // Create a price container div to hold both prices
+      const priceContainer = document.createElement("div");
+      priceContainer.className = "product-detail__price-container";
+
+      // Create and add the original price element
+      const originalPrice = document.createElement("p");
+      originalPrice.className = "product-card__original-price";
+      originalPrice.textContent = `$${product.SuggestedRetailPrice.toFixed(2)}`;
+      priceContainer.appendChild(originalPrice);
+
+      // Create and add the final price element
+      const finalPrice = document.createElement("p");
+      finalPrice.className = "product-card__price";
+      finalPrice.textContent = `$${product.FinalPrice.toFixed(2)}`;
+      priceContainer.appendChild(finalPrice);
+
+      // Create discount badge
+      const discountAmount = product.SuggestedRetailPrice - product.FinalPrice;
+      const discountPercentage = Math.round(
+        (discountAmount / product.SuggestedRetailPrice) * 100,
+      );
+      const discountBadge = document.createElement("div");
+      discountBadge.className = "discount-badge product-detail__discount-badge";
+      discountBadge.textContent = `Save ${discountPercentage}% ($${discountAmount.toFixed(2)})`;
+
+      // Get the original price element and replace it with our container
+      const priceElement = document.getElementById("productFinalPrice");
+      priceElement.replaceWith(priceContainer);
+
+      // Add the discount badge to the product detail section
+      const productDetailSection = document.querySelector(".product-detail");
+      productDetailSection.insertBefore(
+        discountBadge,
+        document.getElementById("productImage"),
+      );
+    } else {
+      // No discount, just show the final price
+      document.getElementById("productFinalPrice").textContent =
+        `$${product.FinalPrice.toFixed(2)}`;
+    }
+
+    // Handle color display if available
+    if (product.Colors && product.Colors.length > 0) {
+      document.getElementById("productColorName").textContent =
+        product.Colors[0].ColorName;
+    } else {
+      document.getElementById("productColorName").textContent = "";
+    }
+
+    document.getElementById("productDescriptionHtml").innerHTML =
+      product.DescriptionHtml || product.Description || "";
+
+    // Set the product ID for the "Add to Cart" button
+    document.getElementById("addToCart").setAttribute("data-id", product.Id);
+
+    // Update the page title
+    document.title = `Sleep Outside | ${product.Name}`;
+  } catch (error) {
+    // Handle error silently without console.error
+    // Display an error message on the page
+    const errorElement = document.createElement("p");
+    errorElement.classList.add("error-message");
+    errorElement.textContent =
+      "We're sorry, there was an error loading this product.";
+    document.querySelector(".product-detail").appendChild(errorElement);
   }
-
-  addProductToCart() {
-    setLocalStorage("so-cart", this.product);
-  }
-
-  renderProductDetails() {
-    document.querySelector(".product-detail__title").innerText =
-      this.product.Name;
-    // Fix image path
-    const img = document.querySelector(".product-detail__image img");
-    img.src = this.product.Image.startsWith("http")
-      ? this.product.Image
-      : `/images/${this.product.Image}`;
-    img.alt = this.product.Name;
-
-    document.querySelector(".product-detail__color").innerText = Array.isArray(
-      this.product.Colors,
-    )
-      ? this.product.Colors.map((c) => c.ColorName || c).join(", ")
-      : this.product.Colors || "";
-    document.querySelector(".product-detail__description").innerHTML =
-      this.product.DescriptionHtml || this.product.Description || "";
-    document.querySelector(".product-card__price").innerText =
-      `$${this.product.FinalPrice}`;
-  }
-}
-
-// Helper to initialize on page load
-export async function productDetails() {
-  const productId = getParam("id");
-  if (!productId) return;
-  const dataSource = new ProductData();
-  const details = new ProductDetails(productId, dataSource);
-  await details.init();
-}
-
-// Load header and footerloadHeaderFooter();
-
-const category = getParam("category");
-// first create an instance of the ProductData class.
-const dataSource = new ProductData();
-// then get the element you want the product list to render in
-const listElement = document.querySelector(".product-list");
-// then create an instance of the ProductList class and send it the correct information.
-const myList = new ProductList(category, dataSource, listElement);
-// finally call the init method to show the products
-myList.init();
-
-// Update the heading to include the category
-const heading = document.querySelector(".products h2");
-if (heading && category) {
-  // Capitalize the first letter and replace hyphens with spaces
-  const formattedCategory = category
-    .replace(/-/g, " ")
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-  heading.textContent = `Top Products: ${formattedCategory}`;
 }

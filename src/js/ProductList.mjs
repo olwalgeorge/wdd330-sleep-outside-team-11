@@ -1,8 +1,14 @@
 // Template function to generate the HTML for a single product card
 function productCardTemplate(product) {
+  // Use PrimaryMedium for product list images, fallback to product.Image
+  let imagePath = product.Images?.PrimaryMedium || product.Image;
+  if (imagePath && imagePath.includes("../images")) {
+    imagePath = imagePath.replace("../images", "/images");
+  }
+  // Link to product detail page with correct id param
   return `<li class="product-card">
-    <a href="product_pages/?product=${product.Id}">
-      <img src="${product.Image}" alt="Image of ${product.Name}">
+    <a href="product_pages/index.html?product=${product.Id}">
+      <img src="${imagePath}" alt="Image of ${product.Name}">
       <h2 class="card__brand">${product.Brand}</h2>
       <h3 class="card__name">${product.Name}</h3>
       <p class="product-card__price">$${product.FinalPrice}</p>
@@ -10,10 +16,8 @@ function productCardTemplate(product) {
   </li>`;
 }
 
-export default class productList {
-  // ProductList class
+export default class ProductList {
   // This class is responsible for managing a list of products
-  // Constructor to initialize the ProductList instance
   constructor(category, dataSource, listElement) {
     this.category = category; // Set the category
     this.dataSource = dataSource; // Set the data source
@@ -25,8 +29,14 @@ export default class productList {
     const list = await this.dataSource.getData(this.category); // Fetch products from the data source
     this.render(list); // Render the products
   }
-  renderList(list) {
+
+  render(list) {
+    this.listElement.innerHTML = ""; // Prevent duplicates
     const htmlStrings = list.map(productCardTemplate);
     this.listElement.insertAdjacentHTML("afterbegin", htmlStrings.join(""));
+  }
+
+  renderList(list) {
+    this.render(list);
   }
 }

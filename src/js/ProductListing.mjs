@@ -10,24 +10,26 @@ export async function renderProductList(selector, category) {
     const products = await getProductsByCategory(category);
 
     // Filter to only include products we have detail pages for
-    const filteredProducts = products.filter(product => AVAILABLE_PRODUCTS.includes(product.Id));
+    const filteredProducts = products.filter((product) =>
+      AVAILABLE_PRODUCTS.includes(product.Id),
+    );
 
     // Get the element to insert products into
     const element = document.querySelector(selector);
-    
+
     if (!element) {
       return;
     }
 
     // Clear existing content
-    element.innerHTML = "";
-    
-    // Create HTML for each product
-    filteredProducts.forEach(product => {
+    let html = "";
+
+    // Build HTML string for each product
+    filteredProducts.forEach((product) => {
       // Fix image paths by converting ../images to /images
       const imagePath = product.Image.replace("../images", "/images");
-      
-      element.innerHTML += `
+
+      html += `
         <li class="product-card">
           <a href="product_pages/index.html?product=${product.Id}">
             <img src="${imagePath}" alt="${product.Name}" />
@@ -36,7 +38,10 @@ export async function renderProductList(selector, category) {
             <p class="product-card__price">$${product.FinalPrice}</p>
           </a>
         </li>
-      `;    });
+      `;
+    });
+
+    element.innerHTML = html;
   } catch (error) {
     // Error handling silently
   }

@@ -246,35 +246,37 @@ button {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
-  list-style: none;
-  padding: 0;
+  margin: 2rem 0;
 }
 
-.product-categories li {
-  text-align: center;
-}
-
-.product-categories a {
-  display: block;
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1.5rem;
   text-decoration: none;
-  color: inherit;
-  padding: 1rem;
   border: 1px solid #ddd;
   border-radius: 8px;
-  transition: transform 0.2s;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: white;
 }
 
-.product-categories a:hover {
+.category-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-.product-categories img {
+.category-card img {
   width: 80px;
   height: 80px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 1rem;
 }
 
+.category-card h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+}
 
 @media screen and (min-width: 500px) {
   body {

@@ -1,42 +1,99 @@
-// Template function to generate the HTML for a single product card
+import { renderListWithTemplate } from "./utils.mjs";
+
 function productCardTemplate(product) {
-  // Use PrimaryMedium for product list images, fallback to product.Image
-  let imagePath = product.Images?.PrimaryMedium || product.Image;
-  if (imagePath && imagePath.includes("../images")) {
-    imagePath = imagePath.replace("../images", "/images");
-  }
-  // Link to product detail page with correct id param
   return `<li class="product-card">
-    <a href="product_pages/index.html?product=${product.Id}">
-      <img src="${imagePath}" alt="Image of ${product.Name}">
-      <h2 class="card__brand">${product.Brand}</h2>
-      <h3 class="card__name">${product.Name}</h3>
+    <a href="../product_pages/?product=${product.Id}">
+      <img
+        src="${product.Images.PrimaryMedium}"
+        alt="Image of ${product.Name}"
+      />
+      <h3 class="card__brand">${product.Brand.Name}</h3>
+      <h2 class="card__name">${product.NameWithoutBrand}</h2>
       <p class="product-card__price">$${product.FinalPrice}</p>
     </a>
   </li>`;
 }
 
 export default class ProductList {
-  // This class is responsible for managing a list of products
   constructor(category, dataSource, listElement) {
-    this.category = category; // Set the category
-    this.dataSource = dataSource; // Set the data source
-    this.listElement = listElement; // Set the list element
+    this.category = category;
+    this.dataSource = dataSource;
+    this.listElement = listElement;
   }
 
-  // Method to fetch products from the data source
   async init() {
-    const list = await this.dataSource.getData(this.category); // Fetch products from the data source
-    this.render(list); // Render the products
+    const list = await this.dataSource.getData(this.category);
+    this.renderList(list);
+    this.updateTitle();
   }
 
-  render(list) {
-    this.listElement.innerHTML = ""; // Prevent duplicates
-    const htmlStrings = list.map(productCardTemplate);
-    this.listElement.insertAdjacentHTML("afterbegin", htmlStrings.join(""));
+  updateTitle() {
+    const titleElement = document.querySelector("h2");
+    if (titleElement && this.category) {
+      const categoryName =
+        this.category.charAt(0).toUpperCase() +
+        this.category.slice(1).replace("-", " ");
+      titleElement.textContent = `Top Products: ${categoryName}`;
+    }
   }
 
   renderList(list) {
-    this.render(list);
+    // Clear existing content first to prevent duplicates
+    this.listElement.innerHTML = "";
+    renderListWithTemplate(productCardTemplate, this.listElement, list);
+  }
+
+  sortProducts(sortType) {
+    let sortedProducts = [...this.products];
+
+    switch (sortType) {
+      case "name":
+        sortedProducts.sort((a, b) => {
+          const nameA = a.NameWithoutBrand || a.Name;
+          const nameB = b.NameWithoutBrand || b.Name;
+          return nameA.localeCompare(nameB);
+        });
+        break;
+
+      case "name-desc":
+        sortedProducts.sort((a, b) => {
+          const nameA = a.NameWithoutBrand || a.Name;
+          const nameB = b.NameWithoutBrand || b.Name;
+          return nameB.localeCompare(nameA);
+        });
+        break;
+
+      case "price":
+        sortedProducts.sort((a, b) => {
+          return parseFloat(a.FinalPrice) - parseFloat(b.FinalPrice);
+        });
+        break;
+
+      case "price-desc":
+        sortedProducts.sort((a, b) => {
+          return parseFloat(b.FinalPrice) - parseFloat(a.FinalPrice);
+        });
+        break;
+
+      case "brand":
+        sortedProducts.sort((a, b) => {
+          return a.Brand.Name.localeCompare(b.Brand.Name);
+        });
+        break;
+
+      case "brand-desc":
+        sortedProducts.sort((a, b) => {
+          return b.Brand.Name.localeCompare(a.Brand.Name);
+        });
+        break;
+
+      case "default":
+      default:
+        // Use original order
+        sortedProducts = [...this.products];
+        break;
+    }
+
+    this.renderList(sortedProducts);
   }
 }

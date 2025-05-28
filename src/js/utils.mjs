@@ -26,3 +26,18 @@ export function updateCartCount() {
   // Placeholder for cart count update logic
   // Implement as needed based on cart storage
 }
+
+// Make sure this function clears content properly
+export function renderListWithTemplate(
+  templateFn,
+  parentElement,
+  list,
+  position = "afterbegin",
+  clear = true,
+) {
+  if (clear) {
+    parentElement.innerHTML = "";
+  }
+  const htmlStrings = list.map(templateFn);
+  parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
+}

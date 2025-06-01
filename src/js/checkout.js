@@ -1,73 +1,13 @@
-import { loadHeaderFooter, getLocalStorage, formatCurrency, updateCartCount } from "./utils.mjs";
+import { loadHeaderFooter, getLocalStorage, updateCartCount } from "./utils.mjs";
+import CheckoutProcess from "./CheckoutProcess.mjs";
 
-// Tax and shipping constants
-const TAX_RATE = 0.06; // 6% tax rate
-const SHIPPING_THRESHOLD = 100; // Free shipping over $100
-const SHIPPING_COST = 10; // $10 shipping cost
+// Initialize CheckoutProcess
+const checkout = new CheckoutProcess("so-cart", ".order-summary");
 
-// Calculate order totals
-function calculateOrderTotals(cartItems) {
-  const subtotal = cartItems.reduce((sum, item) => sum + parseFloat(item.FinalPrice), 0);
-  const shipping = subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + shipping + tax;
-  
-  return {
-    subtotal: subtotal,
-    shipping: shipping,
-    tax: tax,
-    total: total
-  };
-}
-
-// Display order summary from cart items
+// Display order summary from cart items using CheckoutProcess
 function displayOrderSummary() {
-  const cartItems = getLocalStorage("so-cart");
-  const orderItemsElement = document.querySelector("#order-items");
-  const subtotalElement = document.querySelector("#subtotal");
-  const shippingElement = document.querySelector("#shipping");
-  const taxElement = document.querySelector("#tax");
-  const orderTotalElement = document.querySelector("#orderTotal");
-  
-  if (!cartItems || cartItems.length === 0) {
-    if (orderItemsElement) {
-      orderItemsElement.innerHTML = "<p>Your cart is empty</p>";
-    }
-    return;
-  }
-  
-  // Calculate totals
-  const totals = calculateOrderTotals(cartItems);
-  
-  // Build the order items HTML
-  let itemsHTML = "<ul class=\"summary-items\">";
-  
-  cartItems.forEach(item => {
-    // Fix image paths if needed
-    let imagePath = item.Images?.PrimarySmall || item.Image;
-    if (imagePath && imagePath.includes("../images")) {
-      imagePath = imagePath.replace("../images", "/images");
-    }
-    
-    itemsHTML += `
-      <li class="summary-item">
-        <img src="${imagePath}" alt="${item.Name}" width="50">
-        <div class="item-details">
-          <span class="item-name">${item.Name}</span>
-          <span class="item-price">${formatCurrency(parseFloat(item.FinalPrice))}</span>
-        </div>
-      </li>
-    `;
-  });
-  
-  itemsHTML += "</ul>";
-  
-  // Update the DOM with calculated values
-  if (orderItemsElement) orderItemsElement.innerHTML = itemsHTML;
-  if (subtotalElement) subtotalElement.textContent = formatCurrency(totals.subtotal);
-  if (shippingElement) shippingElement.textContent = formatCurrency(totals.shipping);
-  if (taxElement) taxElement.textContent = formatCurrency(totals.tax);
-  if (orderTotalElement) orderTotalElement.innerHTML = `<strong>${formatCurrency(totals.total)}</strong>`;
+  checkout.init();
+  checkout.calculateOrderTotal();
 }
 
 // Format credit card number with spaces
@@ -101,6 +41,7 @@ function formatExpiration(value) {
 function addInputFormatting() {
   const cardNumberInput = document.querySelector("#cardNumber");
   const expirationInput = document.querySelector("#expiration");
+  const zipInput = document.querySelector("#zip");
   
   if (cardNumberInput) {
     cardNumberInput.addEventListener("input", (e) => {
@@ -111,6 +52,13 @@ function addInputFormatting() {
   if (expirationInput) {
     expirationInput.addEventListener("input", (e) => {
       e.target.value = formatExpiration(e.target.value);
+    });
+  }
+  
+  // Add zip code event listener to trigger order total calculation
+  if (zipInput) {
+    zipInput.addEventListener("blur", () => {
+      checkout.calculateOrderTotal();
     });
   }
 }
@@ -132,20 +80,18 @@ function handleFormSubmission() {
       // Get form data
       const formData = new FormData(form);
       const orderData = {};
-      
-      // Convert form data to object
+        // Convert form data to object
       for (let [key, value] of formData.entries()) {
         orderData[key] = value.trim();
       }
-      
-      // Calculate totals
-      const totals = calculateOrderTotals(cartItems);
+        // Calculate totals using CheckoutProcess
+      const totals = checkout.getOrderData();
       
       // Prepare order object
       const order = {
         orderDate: new Date().toISOString(),
         items: cartItems,
-        orderTotal: totals.total,
+        orderTotal: totals.orderTotal,
         shipping: totals.shipping,
         tax: totals.tax,
         fname: orderData.firstName,

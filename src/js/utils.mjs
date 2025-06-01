@@ -103,3 +103,47 @@ function initializeSearchForm() {
     });
   }
 }
+
+// Custom alert message function for better user feedback
+export function alertMessage(message, scroll = true, type = "error") {
+  // Remove any existing alerts
+  const existingAlert = document.querySelector(".alert-message");
+  if (existingAlert) {
+    existingAlert.remove();
+  }
+  
+  // Create alert element
+  const alertDiv = document.createElement("div");
+  alertDiv.className = `alert-message ${type}`;
+  alertDiv.innerHTML = `
+    <div class="alert-content">
+      <span class="alert-text">${message}</span>
+      <button class="alert-close" onclick="this.parentElement.parentElement.remove()">×</button>
+    </div>
+  `;
+  
+  // Insert at top of main element
+  const mainElement = document.querySelector("main");
+  if (mainElement) {
+    mainElement.insertBefore(alertDiv, mainElement.firstChild);
+  } else {
+    // Fallback to body if main not found
+    document.body.insertBefore(alertDiv, document.body.firstChild);
+  }
+  
+  // Scroll to top if requested
+  if (scroll) {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    });
+  }
+  
+  // Auto-remove after 8 seconds (longer for success messages)
+  const timeout = type === "success" ? 5000 : 8000;
+  setTimeout(() => {
+    if (document.contains(alertDiv)) {
+      alertDiv.remove();
+    }
+  }, timeout);
+}

@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage, loadHeaderFooter, updateCartCount } from "./utils.mjs";
+import { getLocalStorage, setLocalStorage, loadHeaderFooter, updateCartCount, alertMessage } from "./utils.mjs";
 import { findProductById } from "./ExternalServices.mjs";
 import { renderProductDetails } from "./ProductDetails.mjs";
 
@@ -22,6 +22,9 @@ function addProductToCart(product) {
 async function addToCartHandler(e) { 
   const product = await findProductById(e.target.dataset.id); 
   addProductToCart(product);
+  
+  // Show success message to user
+  alertMessage(`✓ ${product.NameWithoutBrand || product.Name} added to cart!`, false);
 }
 
 // add listener to Add to Cart button

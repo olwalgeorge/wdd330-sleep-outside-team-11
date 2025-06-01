@@ -1,4 +1,4 @@
-import { loadHeaderFooter, getLocalStorage, updateCartCount } from "./utils.mjs";
+import { loadHeaderFooter, getLocalStorage, updateCartCount, alertMessage } from "./utils.mjs";
 import CheckoutProcess from "./CheckoutProcess.mjs";
 
 // Initialize CheckoutProcess
@@ -77,10 +77,9 @@ function handleFormSubmission() {
         form.reportValidity();
         return;
       }
-      
-      const cartItems = getLocalStorage("so-cart");
+        const cartItems = getLocalStorage("so-cart");
       if (!cartItems || cartItems.length === 0) {
-        alert("Your cart is empty!");
+        alertMessage("Your cart is empty! Please add some items before checking out.");
         return;
       }
         try {
@@ -115,7 +114,7 @@ function handleFormSubmission() {
           errorMessage = error.message;
         }
         
-        alert(`Error: ${errorMessage}`);
+        alertMessage(`Error submitting order: ${errorMessage}`);
       }
     });
   }

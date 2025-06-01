@@ -159,7 +159,6 @@ export default class CheckoutProcess {
     
     return convertedJSON;
   }
-
   // checkout function that will get called when the form is submitted
   async checkout(form) {
     // get the form element data by the form name
@@ -181,12 +180,21 @@ export default class CheckoutProcess {
       orderTotal: this.orderTotal.toFixed(2),
       shipping: this.shipping,
       tax: this.tax.toFixed(2)
-    };    try {
+    };
+
+    try {
       // call the checkout method in the ExternalServices module and send it the JSON order data.
       const result = await this.services.checkout(orderData);
       return result;
     } catch (error) {
-      throw new Error(`Failed to submit order: ${error.message}`);
+      // Enhanced error handling to provide more detailed information
+      if (error.name === "servicesError") {
+        // Server returned detailed error information
+        throw error;
+      } else {
+        // Generic error fallback
+        throw { name: "checkoutError", message: error.message || "Unknown error occurred during checkout" };
+      }
     }
   }
 }

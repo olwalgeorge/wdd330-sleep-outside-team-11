@@ -22,9 +22,8 @@ function addProductToCart(product) {
 async function addToCartHandler(e) { 
   const product = await findProductById(e.target.dataset.id); 
   addProductToCart(product);
-  
-  // Show success message to user
-  alertMessage(`✓ ${product.NameWithoutBrand || product.Name} added to cart!`, false);
+    // Show success message to user
+  alertMessage(`✓ ${product.NameWithoutBrand || product.Name} added to cart!`, false, "success");
 }
 
 // add listener to Add to Cart button

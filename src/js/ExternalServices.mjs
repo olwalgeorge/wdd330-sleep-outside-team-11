@@ -4,13 +4,13 @@ export default class ExternalServices {
   constructor() {
     // Initialize any properties if needed
   }
-
   // Method to fetch product data for a category from the API
   async getProductsByCategory(category = "tents") {
     const response = await fetch(`${baseURL}/products/search/${category}`);
     const data = await response.json();
     return data.Result;
   }
+
   // Method to search products by query string - fetches from all categories and filters locally
   async searchProducts(query) {
     if (!query || !query.trim()) {
@@ -18,7 +18,7 @@ export default class ExternalServices {
     }
 
     const searchTerm = query.toLowerCase().trim();
-    const categories = ['tents', 'backpacks', 'sleeping-bags', 'hammocks'];
+    const categories = ["tents", "backpacks", "sleeping-bags", "hammocks"];
     let allProducts = [];
 
     // Fetch products from all categories
@@ -42,12 +42,11 @@ export default class ExternalServices {
 
       // Filter products based on search query
       const filteredProducts = allProducts.filter(product => {
-        const name = (product.Name || '').toLowerCase();
-        const nameWithoutBrand = (product.NameWithoutBrand || '').toLowerCase();
-        const brand = (product.Brand?.Name || '').toLowerCase();
-        const description = (product.DescriptionHtmlSimple || '').toLowerCase();
-        
-        return name.includes(searchTerm) || 
+        const name = (product.Name || "").toLowerCase();
+        const nameWithoutBrand = (product.NameWithoutBrand || "").toLowerCase();
+        const brand = (product.Brand?.Name || "").toLowerCase();
+        const description = (product.DescriptionHtmlSimple || "").toLowerCase();
+          return name.includes(searchTerm) || 
                nameWithoutBrand.includes(searchTerm) || 
                brand.includes(searchTerm) ||
                description.includes(searchTerm);
@@ -55,7 +54,7 @@ export default class ExternalServices {
 
       return filteredProducts;
     } catch (error) {
-      console.error('Search failed:', error);
+      console.error("Search failed:", error);
       return [];
     }
   }

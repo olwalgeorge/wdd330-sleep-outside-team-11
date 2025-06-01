@@ -1,6 +1,6 @@
 :root {
   --font-body: Arial, Helvetica, sans-serif;
-  --font-headline: Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  --font-headline: Haettenschweiler, "Arial Black", sans-serif;
   /* colors */
   --primary-color: #f0a868;
   --secondary-color: #525b0f;
@@ -438,8 +438,12 @@ footer {
 .category-card h3 {
   margin: 0;
   text-align: center;
-  font-family: var(--font-headline);
+  font-family: "Arial Black", "Helvetica Bold", Arial, sans-serif;
+  font-weight: bold;
+  font-size: 1.1rem;
   color: var(--tertiary-color);
+  letter-spacing: 0.5px;
+  text-shadow: none;
 }
 
 /* Breadcrumb navigation */

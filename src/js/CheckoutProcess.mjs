@@ -1,4 +1,5 @@
 import { getLocalStorage } from "./utils.mjs";
+import ExternalServices from "./ExternalServices.mjs";
 
 export default class CheckoutProcess {
   constructor(key, outputSelector) {
@@ -9,6 +10,7 @@ export default class CheckoutProcess {
     this.shipping = 0;
     this.tax = 0;
     this.orderTotal = 0;
+    this.services = new ExternalServices();
   }
 
   init() {
@@ -124,7 +126,6 @@ export default class CheckoutProcess {
       orderTotalElement.innerHTML = `<strong>$${this.orderTotal.toFixed(2)}</strong>`;
     }
   }
-
   // Method to get the current order data for form submission
   getOrderData() {
     return {
@@ -134,5 +135,39 @@ export default class CheckoutProcess {
       shipping: this.shipping,
       orderTotal: this.orderTotal
     };
+  }
+
+  // Method to submit the order to the server
+  async checkout(formData) {
+    // Prepare the order object with form data and cart information
+    const order = {
+      orderDate: new Date(),
+      fname: formData.fname,
+      lname: formData.lname,
+      street: formData.street,
+      city: formData.city,
+      state: formData.state,
+      zip: formData.zip,
+      cardNumber: formData.cardNumber,
+      expiration: formData.expiration,
+      code: formData.code,
+      items: this.list.map(item => ({
+        id: item.Id,
+        name: item.Name,
+        price: item.FinalPrice,
+        quantity: 1 // assuming quantity of 1 for each item for now
+      })),
+      orderTotal: this.orderTotal,
+      shipping: this.shipping,
+      tax: this.tax
+    };
+
+    try {
+      // Submit the order using ExternalServices
+      const result = await this.services.checkout(order);
+      return result;
+    } catch (error) {
+      throw new Error(`Failed to submit order: ${error.message}`);
+    }
   }
 }

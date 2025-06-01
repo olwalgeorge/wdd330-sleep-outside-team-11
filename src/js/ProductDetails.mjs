@@ -1,4 +1,4 @@
-import { findProductById } from "./ProductData.mjs";
+import { findProductById } from "./ExternalServices.mjs";
 import { getParam } from "./utils.mjs";
 
 export async function renderProductDetails() {

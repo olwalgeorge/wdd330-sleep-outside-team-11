@@ -1,5 +1,5 @@
 
-import { getProductsByCategory } from "./ProductData.mjs";
+import { getProductsByCategory } from "./ExternalServices.mjs";
 
 export async function renderProductList(selector, category, sort = "name-asc") {
   try {

@@ -1,5 +1,5 @@
 import { getLocalStorage, setLocalStorage, loadHeaderFooter, updateCartCount } from "./utils.mjs";
-import { findProductById } from "./ProductData.mjs";
+import { findProductById } from "./ExternalServices.mjs";
 import { renderProductDetails } from "./ProductDetails.mjs";
 
 function addProductToCart(product) {

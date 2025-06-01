@@ -82,4 +82,24 @@ export async function loadHeaderFooter() {
   
   // Update cart count after header is loaded
   updateCartCount();
+  
+  // Initialize search form functionality
+  initializeSearchForm();
+}
+
+// Initialize search form functionality
+function initializeSearchForm() {
+  const searchForm = document.querySelector(".search-form");
+  if (searchForm) {
+    searchForm.addEventListener("submit", function(event) {
+      event.preventDefault();
+      const searchInput = document.getElementById("search-input");
+      const searchQuery = searchInput.value.trim();
+      
+      if (searchQuery) {
+        // Navigate to product listing page with search parameter
+        window.location.href = `/product-listing/?search=${encodeURIComponent(searchQuery)}`;
+      }
+    });
+  }
 }

@@ -12,6 +12,13 @@ export default class ExternalServices {
     return data.Result;
   }
 
+  // Method to search products by query string
+  async searchProducts(query) {
+    const response = await fetch(`${baseURL}/products/search?q=${encodeURIComponent(query)}`);
+    const data = await response.json();
+    return data.Result || [];
+  }
+
   // Method to find a specific product by id
   async findProductById(id) {
     const response = await fetch(`${baseURL}/product/${id}`);
@@ -49,4 +56,8 @@ export async function findProductById(id) {
 
 export async function getProductsByCategory(category = "tents") {
   return await externalServices.getProductsByCategory(category);
+}
+
+export async function searchProducts(query) {
+  return await externalServices.searchProducts(query);
 }

@@ -33,7 +33,9 @@ img {
 header {
   display: flex;
   justify-content: space-between;
+  align-items: center;
   padding: 0.5rem;
+  gap: 1rem;
 }
 
 p {
@@ -649,34 +651,82 @@ footer {
   color: var(--tertiary-color);
 }
 
+/* Search container and form styling */
+.search-container {
+  flex: 1;
+  max-width: 400px;
+  margin: 0 1rem;
+}
+
+.search-form {
+  display: flex;
+  position: relative;
+  width: 100%;
+}
+
+.search-form input[type="search"] {
+  flex: 1;
+  padding: 0.5rem 2.5rem 0.5rem 1rem;
+  border: 2px solid var(--light-grey);
+  border-radius: 25px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.search-form input[type="search"]:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(240, 168, 104, 0.2);
+}
+
+.search-btn {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  color: var(--dark-grey);
+  transition: color 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn:hover {
+  color: var(--primary-color);
+}
+
+.search-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Responsive adjustments for search */
 @media screen and (max-width: 768px) {
-  .checkout-container {
-    flex-direction: column;
-  }
-  
-  .checkout-form {
-    margin-right: 0;
-    margin-bottom: 2rem;
-  }
-  
-  .order-summary {
-    max-width: 100%;
-  }
-  
-  .state-zip-row,
-  .card-details-row {
-    flex-direction: column;
-    gap: 0;
-  }
-  
-  .cart-footer {
-    flex-direction: column;
-    align-items: stretch;
+  header {
+    flex-wrap: wrap;
     gap: 0.5rem;
   }
   
-  .checkout-btn {
-    text-align: center;
-    width: 100%;
+  .search-container {
+    order: 3;
+    flex-basis: 100%;
+    margin: 0.5rem 0 0 0;
+    max-width: none;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .search-form input[type="search"] {
+    font-size: 0.9rem;
+    padding: 0.4rem 2.25rem 0.4rem 0.75rem;
+  }
+  
+  .search-btn svg {
+    width: 18px;
+    height: 18px;
   }
 }

@@ -1,26 +1,31 @@
 
-import { getProductsByCategory } from "./ExternalServices.mjs";
+import { getProductsByCategory, searchProducts } from "./ExternalServices.mjs";
 
-export async function renderProductList(selector, category, sort = "name-asc") {
+export async function renderProductList(selector, category, sort = "name-asc", searchQuery = null) {
   try {
     // Get the element to insert products into
     const element = document.querySelector(selector);
     
     if (!element) {
       return;
-    }
-
-    // Show loading indicator
+    }    // Show loading indicator
     element.innerHTML = "<li class='loading-indicator'>Loading products...</li>";
     
-    // Get all products in the category
-    const products = await getProductsByCategory(category);
+    // Get products either by search query or category
+    let products;
+    if (searchQuery && searchQuery.trim()) {
+      products = await searchProducts(searchQuery.trim());
+    } else {
+      products = await getProductsByCategory(category);
+    }
 
     // Clear existing content
     element.innerHTML = "";
-    
-    if (!products || products.length === 0) {
-      element.innerHTML = "<li class='no-products'>No products found in this category</li>";
+      if (!products || products.length === 0) {
+      const message = searchQuery && searchQuery.trim() 
+        ? `No products found for "${searchQuery}"`
+        : "No products found in this category";
+      element.innerHTML = `<li class='no-products'>${message}</li>`;
       return;
     }
 

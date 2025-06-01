@@ -15,35 +15,42 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     loadHeaderFooter();
   } catch (error) {
-    console.error("Failed to load header/footer:", error);
+    // Handle error silently
   }
 
-  // Get and validate category
+  // Get search query and category parameters
+  const searchQuery = getParam("search");
   const validCategories = ["tents", "sleeping-bags", "backpacks", "all"];
   const category = validCategories.includes(getParam("category")) ? getParam("category") : "all";
-  const displayCategory = formatCategory(category);
+  
+  // Determine display content based on search vs category
+  let displayTitle, displayBreadcrumb;
+  if (searchQuery && searchQuery.trim()) {
+    displayTitle = `Search Results`;
+    displayBreadcrumb = `Search: "${searchQuery}"`;
+    document.title = `Sleep Outside | Search: ${searchQuery}`;
+  } else {
+    const displayCategory = formatCategory(category);
+    displayTitle = displayCategory;
+    displayBreadcrumb = displayCategory;
+    document.title = `Sleep Outside | ${displayCategory}`;
+  }
 
-  // Update category display
+  // Update page display elements
   const categoryTitle = document.getElementById("category-title");
   const categoryName = document.getElementById("category-name");
   if (categoryTitle && categoryName) {
-    categoryTitle.textContent = displayCategory;
-    categoryName.textContent = displayCategory;
-    document.title = `Sleep Outside | ${displayCategory}`;
-  } else {
-    console.error("Category title or name element not found");
+    categoryTitle.textContent = displayTitle;
+    categoryName.textContent = displayBreadcrumb;
   }
 
   // Get sort select element
-  const sortSelect = document.getElementById("sort-select");
-
-  // Function to render products with current sort
+  const sortSelect = document.getElementById("sort-select");  // Function to render products with current sort
   function renderProducts() {
     const sortValue = sortSelect ? sortSelect.value : "name-asc"; // Default to name-asc
     try {
-      renderProductList(".product-list", category, sortValue);
+      renderProductList(".product-list", category, sortValue, searchQuery);
     } catch (error) {
-      console.error("Failed to render product list:", error);
       const productList = document.querySelector(".product-list");
       if (productList) {
         productList.innerHTML = "<li>Unable to load products. Please try again later.</li>";
@@ -58,13 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
   try {
     updateCartCount();
   } catch (error) {
-    console.error("Failed to update cart count:", error);
+    // Handle error silently
   }
 
   // Add event listener for sort changes
   if (sortSelect) {
     sortSelect.addEventListener("change", renderProducts);
-  } else {
-    console.error("Sort select element not found");
   }
 });

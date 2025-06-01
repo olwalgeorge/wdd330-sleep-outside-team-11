@@ -11,12 +11,53 @@ export default class ExternalServices {
     const data = await response.json();
     return data.Result;
   }
-
-  // Method to search products by query string
+  // Method to search products by query string - fetches from all categories and filters locally
   async searchProducts(query) {
-    const response = await fetch(`${baseURL}/products/search?q=${encodeURIComponent(query)}`);
-    const data = await response.json();
-    return data.Result || [];
+    if (!query || !query.trim()) {
+      return [];
+    }
+
+    const searchTerm = query.toLowerCase().trim();
+    const categories = ['tents', 'backpacks', 'sleeping-bags', 'hammocks'];
+    let allProducts = [];
+
+    // Fetch products from all categories
+    try {
+      const categoryPromises = categories.map(async (category) => {
+        try {
+          const response = await fetch(`${baseURL}/products/search/${category}`);
+          if (response.ok) {
+            const data = await response.json();
+            return data.Result || [];
+          }
+          return [];
+        } catch (error) {
+          console.warn(`Failed to fetch ${category}:`, error);
+          return [];
+        }
+      });
+
+      const categoryResults = await Promise.all(categoryPromises);
+      allProducts = categoryResults.flat();
+
+      // Filter products based on search query
+      const filteredProducts = allProducts.filter(product => {
+        const name = (product.Name || '').toLowerCase();
+        const nameWithoutBrand = (product.NameWithoutBrand || '').toLowerCase();
+        const brand = (product.Brand?.Name || '').toLowerCase();
+        const description = (product.DescriptionHtmlSimple || '').toLowerCase();
+        
+        return name.includes(searchTerm) || 
+               nameWithoutBrand.includes(searchTerm) || 
+               brand.includes(searchTerm) ||
+               description.includes(searchTerm);
+      });
+
+      return filteredProducts;
+    } catch (error) {
+      console.error('Search failed:', error);
+      return [];
+    }
   }
 
   // Method to find a specific product by id

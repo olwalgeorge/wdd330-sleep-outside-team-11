@@ -71,6 +71,13 @@ function handleFormSubmission() {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       
+      // Check form validity before proceeding
+      const isValid = form.checkValidity();
+      if (!isValid) {
+        form.reportValidity();
+        return;
+      }
+      
       const cartItems = getLocalStorage("so-cart");
       if (!cartItems || cartItems.length === 0) {
         alert("Your cart is empty!");

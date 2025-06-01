@@ -125,8 +125,7 @@ export default class CheckoutProcess {
     if (orderTotalElement) {
       orderTotalElement.innerHTML = `<strong>$${this.orderTotal.toFixed(2)}</strong>`;
     }
-  }
-  // Method to get the current order data for form submission
+  }  // Method to get the current order data for form submission
   getOrderData() {
     return {
       items: this.list,
@@ -137,34 +136,54 @@ export default class CheckoutProcess {
     };
   }
 
-  // Method to submit the order to the server
-  async checkout(formData) {
-    // Prepare the order object with form data and cart information
-    const order = {
-      orderDate: new Date(),
-      fname: formData.fname,
-      lname: formData.lname,
-      street: formData.street,
-      city: formData.city,
-      state: formData.state,
-      zip: formData.zip,
-      cardNumber: formData.cardNumber,
-      expiration: formData.expiration,
-      code: formData.code,
-      items: this.list.map(item => ({
-        id: item.Id,
-        name: item.Name,
-        price: item.FinalPrice,
-        quantity: 1 // assuming quantity of 1 for each item for now
-      })),
-      orderTotal: this.orderTotal,
-      shipping: this.shipping,
-      tax: this.tax
-    };
+  // takes the items currently stored in the cart (localstorage) and returns them in a simplified form.
+  packageItems(items) {
+    // convert the list of products from localStorage to the simpler form required for the checkout process.
+    // An Array.map would be perfect for this process.
+    return items.map(item => ({
+      id: item.Id,
+      name: item.Name,
+      price: parseFloat(item.FinalPrice),
+      quantity: 1 // assuming quantity of 1 for each item for now
+    }));
+  }
 
-    try {
-      // Submit the order using ExternalServices
-      const result = await this.services.checkout(order);
+  // Helper function to convert form data to JSON object
+  formDataToJSON(formElement) {
+    const formData = new FormData(formElement);
+    const convertedJSON = {};
+    
+    formData.forEach((value, key) => {
+      convertedJSON[key] = value;
+    });
+    
+    return convertedJSON;
+  }
+
+  // checkout function that will get called when the form is submitted
+  async checkout(form) {
+    // get the form element data by the form name
+    const json = this.formDataToJSON(form);
+    
+    // convert the form data to a JSON order object and map field names to server expectations
+    const orderData = {
+      orderDate: new Date().toISOString(),
+      fname: json.firstName,
+      lname: json.lastName, 
+      street: json.street,
+      city: json.city,
+      state: json.state,
+      zip: json.zip,
+      cardNumber: json.cardNumber.replace(/\s/g, ""), // Remove spaces for submission
+      expiration: json.expiration,
+      code: json.securityCode,
+      items: this.packageItems(this.list),
+      orderTotal: this.orderTotal.toFixed(2),
+      shipping: this.shipping,
+      tax: this.tax.toFixed(2)
+    };    try {
+      // call the checkout method in the ExternalServices module and send it the JSON order data.
+      const result = await this.services.checkout(orderData);
       return result;
     } catch (error) {
       throw new Error(`Failed to submit order: ${error.message}`);

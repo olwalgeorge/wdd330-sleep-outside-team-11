@@ -17,16 +17,15 @@
         
         <div class="checkout-container">
           <form class="checkout-form" id="checkout-form">
-            <h3>Customer Information</h3>
-            <fieldset class="customer-info">
+            <h3>Customer Information</h3>            <fieldset class="customer-info">
               <legend>Name</legend>
               <label for="firstName">
                 First Name*
-                <input type="text" id="firstName" name="firstName" required>
+                <input type="text" id="firstName" name="firstName" required value="John">
               </label>
               <label for="lastName">
                 Last Name*
-                <input type="text" id="lastName" name="lastName" required>
+                <input type="text" id="lastName" name="lastName" required value="Doe">
               </label>
             </fieldset>
 
@@ -34,44 +33,42 @@
               <legend>Address</legend>
               <label for="street">
                 Street Address*
-                <input type="text" id="street" name="street" required>
+                <input type="text" id="street" name="street" required value="123 Main">
               </label>
               <label for="city">
                 City*
-                <input type="text" id="city" name="city" required>
+                <input type="text" id="city" name="city" required value="Rexburg">
               </label>
               <div class="state-zip-row">
                 <label for="state">
                   State*
-                  <input type="text" id="state" name="state" required>
+                  <input type="text" id="state" name="state" required value="ID">
                 </label>
                 <label for="zip">
                   Zip Code*
-                  <input type="text" id="zip" name="zip" pattern="[0-9]{5}(-[0-9]{4})?" required>
+                  <input type="text" id="zip" name="zip" pattern="[0-9]{5}(-[0-9]{4})?" required value="83440">
                 </label>
               </div>
-            </fieldset>
-
-            <fieldset class="payment-info">
+            </fieldset><fieldset class="payment-info">
               <legend>Payment Information</legend>
               <label for="cardNumber">
                 Credit Card Number*
                 <input type="text" id="cardNumber" name="cardNumber" 
                        pattern="[0-9\s]{13,19}" maxlength="19" required
-                       placeholder="1234 5678 9012 3456">
+                       placeholder="1234 5678 9012 3456" value="1234123412341234">
               </label>
               <div class="card-details-row">
                 <label for="expiration">
                   Expiration Date*
                   <input type="text" id="expiration" name="expiration" 
                          pattern="(0[1-9]|1[0-2])\/[0-9]{2}" maxlength="5" required
-                         placeholder="MM/YY">
+                         placeholder="MM/YY" value="12/25">
                 </label>
                 <label for="securityCode">
                   Security Code*
                   <input type="text" id="securityCode" name="securityCode" 
                          pattern="[0-9]{3,4}" maxlength="4" required
-                         placeholder="123">
+                         placeholder="123" value="123">
                 </label>
               </div>
             </fieldset>

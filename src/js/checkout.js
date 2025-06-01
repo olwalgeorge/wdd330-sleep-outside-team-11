@@ -75,17 +75,12 @@ function handleFormSubmission() {
       if (!cartItems || cartItems.length === 0) {
         alert("Your cart is empty!");
         return;
-      }      // Get form data
-      const formData = new FormData(form);
-      const orderData = {};
-      // Convert form data to object
-      for (let [key, value] of formData.entries()) {
-        orderData[key] = value.trim();
       }
       
       try {
         // Submit order using CheckoutProcess and ExternalServices
-        const result = await checkout.checkout(orderData);
+        // Pass the form element directly to the checkout method
+        const result = await checkout.checkout(form);
         
         // Clear cart on successful submission
         localStorage.removeItem("so-cart");

@@ -75,78 +75,31 @@ function handleFormSubmission() {
       if (!cartItems || cartItems.length === 0) {
         alert("Your cart is empty!");
         return;
-      }
-      
-      // Get form data
+      }      // Get form data
       const formData = new FormData(form);
       const orderData = {};
-        // Convert form data to object
+      // Convert form data to object
       for (let [key, value] of formData.entries()) {
         orderData[key] = value.trim();
       }
-        // Calculate totals using CheckoutProcess
-      const totals = checkout.getOrderData();
-      
-      // Prepare order object
-      const order = {
-        orderDate: new Date().toISOString(),
-        items: cartItems,
-        orderTotal: totals.orderTotal,
-        shipping: totals.shipping,
-        tax: totals.tax,
-        fname: orderData.firstName,
-        lname: orderData.lastName,
-        street: orderData.street,
-        city: orderData.city,
-        state: orderData.state,
-        zip: orderData.zip,
-        cardNumber: orderData.cardNumber.replace(/\s/g, ""), // Remove spaces for submission
-        expiration: orderData.expiration,
-        code: orderData.securityCode
-      };
       
       try {
-        // Submit order to server
-        const response = await submitOrder(order);
+        // Submit order using CheckoutProcess and ExternalServices
+        const result = await checkout.checkout(orderData);
         
-        if (response.success) {
-          // Clear cart
-          localStorage.removeItem("so-cart");
-          updateCartCount();
-          
-          // Show success message          alert(`Order submitted successfully! Order ID: ${response.orderId || "N/A"}`);
-          
-          // Redirect to home page or order confirmation
-          window.location.href = "/";
-        } else {
-          alert("Failed to submit order. Please try again.");
-        }
+        // Clear cart on successful submission
+        localStorage.removeItem("so-cart");
+        updateCartCount();
+        
+        // Show success message
+        alert(`Order submitted successfully! Order ID: ${result.orderId || "N/A"}`);
+        
+        // Redirect to home page or order confirmation
+        window.location.href = "/";
       } catch (error) {
-        alert("There was an error submitting your order. Please try again.");
+        alert(`There was an error submitting your order: ${error.message}`);
       }
     });
-  }
-}
-
-// Submit order to server
-async function submitOrder(order) {
-  try {
-    const response = await fetch("https://wdd330-backend.onrender.com/checkout", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(order),
-    });
-    
-    const result = await response.json();
-    
-    if (response.ok) {
-      return { success: true, orderId: result.orderId };
-    } else {
-      return { success: false, error: result.message };
-    }  } catch (error) {
-    return { success: false, error: "Network error" };
   }
 }
 

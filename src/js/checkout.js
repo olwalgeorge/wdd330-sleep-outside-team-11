@@ -83,8 +83,7 @@ function handleFormSubmission() {
         alert("Your cart is empty!");
         return;
       }
-      
-      try {
+        try {
         // Submit order using CheckoutProcess and ExternalServices
         // Pass the form element directly to the checkout method
         const result = await checkout.checkout(form);
@@ -93,13 +92,30 @@ function handleFormSubmission() {
         localStorage.removeItem("so-cart");
         updateCartCount();
         
-        // Show success message
-        alert(`Order submitted successfully! Order ID: ${result.orderId || "N/A"}`);
+        // Store order result for success page (optional)
+        if (result && result.orderId) {
+          localStorage.setItem("lastOrderId", result.orderId);
+        }
         
-        // Redirect to home page or order confirmation
-        window.location.href = "/";
+        // Redirect to success page
+        window.location.href = "/checkout/success.html";
       } catch (error) {
-        alert(`There was an error submitting your order: ${error.message}`);
+        // Enhanced error handling - show detailed error messages
+        let errorMessage = "There was an error submitting your order.";
+        
+        if (error.name === "servicesError" && error.message) {
+          // Server returned detailed error information
+          if (typeof error.message === "object") {
+            // Handle object error messages from server
+            errorMessage = error.message.message || JSON.stringify(error.message);
+          } else {
+            errorMessage = error.message;
+          }
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        alert(`Error: ${errorMessage}`);
       }
     });
   }

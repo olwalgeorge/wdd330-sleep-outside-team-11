@@ -20,14 +20,24 @@ function renderCartContents() {
     
     // Calculate and display the total
     const total = calculateCartTotal(cartItems);
-    const totalElement = document.querySelector(".cart-total");
-    if (totalElement) {
+    const totalElement = document.querySelector(".cart-total");    if (totalElement) {
       totalElement.textContent = `Total: ${formatCurrency(total)}`;
-    } else {
+      // Ensure checkout button exists
+      if (!document.querySelector(".checkout-btn")) {
+        const checkoutBtn = document.createElement("a");
+        checkoutBtn.href = "/checkout/index.html";
+        checkoutBtn.classList.add("checkout-btn");
+        checkoutBtn.textContent = "Proceed to Checkout";
+        totalElement.parentNode.appendChild(checkoutBtn);
+      }
+    }else {
       // Create total element if it doesn't exist
       const totalDiv = document.createElement("div");
       totalDiv.classList.add("cart-footer");
-      totalDiv.innerHTML = `<p class="cart-total">Total: ${formatCurrency(total)}</p>`;
+      totalDiv.innerHTML = `
+        <p class="cart-total">Total: ${formatCurrency(total)}</p>
+        <a href="/checkout/index.html" class="checkout-btn">Proceed to Checkout</a>
+      `;
       document.querySelector(".products").appendChild(totalDiv);
     }
   } else {

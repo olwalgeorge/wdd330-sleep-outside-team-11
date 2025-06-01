@@ -1,13 +1,22 @@
 const baseURL = "https://wdd330-backend.onrender.com";
 
+// Helper function to convert response to JSON with detailed error handling
+async function convertToJson(res) {
+  const jsonResponse = await res.json();
+  if (res.ok) {
+    return jsonResponse;
+  } else {
+    throw { name: "servicesError", message: jsonResponse };
+  }
+}
+
 export default class ExternalServices {
   constructor() {
     // Initialize any properties if needed
-  }
-  // Method to fetch product data for a category from the API
+  }  // Method to fetch product data for a category from the API
   async getProductsByCategory(category = "tents") {
     const response = await fetch(`${baseURL}/products/search/${category}`);
-    const data = await response.json();
+    const data = await convertToJson(response);
     return data.Result;
   }
 
@@ -22,17 +31,15 @@ export default class ExternalServices {
     let allProducts = [];
 
     // Fetch products from all categories
-    try {
-      const categoryPromises = categories.map(async (category) => {
+    try {      const categoryPromises = categories.map(async (category) => {
         try {
           const response = await fetch(`${baseURL}/products/search/${category}`);
           if (response.ok) {
-            const data = await response.json();
+            const data = await convertToJson(response);
             return data.Result || [];
           }
           return [];
         } catch (error) {
-          console.warn(`Failed to fetch ${category}:`, error);
           return [];
         }
       });
@@ -50,22 +57,17 @@ export default class ExternalServices {
                nameWithoutBrand.includes(searchTerm) || 
                brand.includes(searchTerm) ||
                description.includes(searchTerm);
-      });
-
-      return filteredProducts;
+      });      return filteredProducts;
     } catch (error) {
-      console.error("Search failed:", error);
       return [];
     }
   }
-
   // Method to find a specific product by id
   async findProductById(id) {
     const response = await fetch(`${baseURL}/product/${id}`);
-    const data = await response.json();
+    const data = await convertToJson(response);
     return data.Result;
   }
-
   // Method to submit checkout order
   async checkout(order) {
     const options = {
@@ -77,13 +79,7 @@ export default class ExternalServices {
     };
     
     const response = await fetch(`${baseURL}/checkout`, options);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    return data;
+    return await convertToJson(response);
   }
 }
 

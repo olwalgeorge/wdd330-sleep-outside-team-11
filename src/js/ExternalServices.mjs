@@ -76,15 +76,39 @@ export default class ExternalServices {
   }
   // Method to submit checkout order
   async checkout(order) {
+    try {
+      const options = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(order),
+      };
+
+      const response = await fetch(`${baseURL}/checkout`, options);
+      return await convertToJson(response);
+    } catch (err) {
+      // Handle the error - display message to user
+      if (err.name === "servicesError") {
+        // err.message will contain the detailed server response
+        this.displayError(err.message);
+      } else {
+        // Handle other types of errors
+        this.displayError("An unexpected error occurred during checkout");
+      }
+    }
+  }
+  // Add this method to your ExternalServices class
+  async createUser(userData) {
     const options = {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(order),
+      body: JSON.stringify(userData),
     };
 
-    const response = await fetch(`${baseURL}/checkout`, options);
+    const response = await fetch(`${baseURL}/users`, options);
     return await convertToJson(response);
   }
 }

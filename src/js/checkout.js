@@ -132,6 +132,20 @@ document.addEventListener("DOMContentLoaded", () => {
   loadHeaderFooter();
   displayOrderSummary();
   addInputFormatting();
-  handleFormSubmission();
+  document.querySelector("#checkoutSubmit").addEventListener("click", (e) => {
+    e.preventDefault();
+
+    // Get the form and check validity
+    const form = document.querySelector("#checkout-form");
+    const isValid = form.checkValidity();
+
+    if (!isValid) {
+      form.reportValidity();
+      return;
+    }
+
+    // Call checkout
+    myCheckout.checkout();
+  });
   updateCartCount();
 });

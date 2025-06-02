@@ -1,6 +1,11 @@
 export function getLocalStorage(key) {
   return JSON.parse(localStorage.getItem(key));
 }
+
+export function setLocalStorage(key, data) {
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
 export function formatCurrency(value) {
   return `$${Number(value).toFixed(2)}`;
 }
@@ -26,8 +31,8 @@ export function renderListWithTemplate(
 
 // Get the number of items in the cart
 export function getCartItemCount() {
-  const cartItems = getLocalStorage("so-cart");
-  return cartItems ? cartItems.length : 0;
+  const cart = getLocalStorage("so-cart") || [];
+  return cart.reduce((total, item) => total + (item.quantity || 1), 0);
 }
 
 // Update the cart count display
@@ -97,7 +102,7 @@ export function updateCartCount() {
 // render template with data if available
 export function renderWithTemplate(template, parentElement, data, callback) {
   parentElement.innerHTML = template;
-  if(callback) {
+  if (callback) {
     callback(data);
   }
 }
@@ -119,10 +124,10 @@ export async function loadHeaderFooter() {
 
   renderWithTemplate(headerTemplate, headerElement);
   renderWithTemplate(footerTemplate, footerElement);
-  
+
   // Update cart count after header is loaded
   updateCartCount();
-  
+
   // Initialize search form functionality
   initializeSearchForm();
 }
@@ -131,11 +136,11 @@ export async function loadHeaderFooter() {
 function initializeSearchForm() {
   const searchForm = document.querySelector(".search-form");
   if (searchForm) {
-    searchForm.addEventListener("submit", function(event) {
+    searchForm.addEventListener("submit", function (event) {
       event.preventDefault();
       const searchInput = document.getElementById("search-input");
       const searchQuery = searchInput.value.trim();
-      
+
       if (searchQuery) {
         // Navigate to product listing page with search parameter
         window.location.href = `/product-listing/?search=${encodeURIComponent(searchQuery)}`;
@@ -151,7 +156,7 @@ export function alertMessage(message, scroll = true, type = "error") {
   if (existingAlert) {
     existingAlert.remove();
   }
-  
+
   // Create alert element
   const alertDiv = document.createElement("div");
   alertDiv.className = `alert-message ${type}`;
@@ -161,7 +166,7 @@ export function alertMessage(message, scroll = true, type = "error") {
       <button class="alert-close" onclick="this.parentElement.parentElement.remove()">×</button>
     </div>
   `;
-  
+
   // Insert at top of main element
   const mainElement = document.querySelector("main");
   if (mainElement) {
@@ -170,15 +175,15 @@ export function alertMessage(message, scroll = true, type = "error") {
     // Fallback to body if main not found
     document.body.insertBefore(alertDiv, document.body.firstChild);
   }
-  
+
   // Scroll to top if requested
   if (scroll) {
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      behavior: "smooth",
     });
   }
-  
+
   // Auto-remove after 8 seconds (longer for success messages)
   const timeout = type === "success" ? 5000 : 8000;
   setTimeout(() => {

@@ -11,8 +11,24 @@ function addProductToCart(product) {
     // convert cart into an array if cart exists but is not an array
     cart = [cart]; 
   }
-  // Add the new product to the cart array
-  cart.push(product);
+  
+  // Check if product is already in cart
+  const existingProductIndex = cart.findIndex(item => item.Id === product.Id);
+  
+  if (existingProductIndex >= 0) {
+    // Product already exists, increment quantity
+    if (!cart[existingProductIndex].quantity) {
+      // If quantity property doesn't exist, initialize it to 1
+      cart[existingProductIndex].quantity = 1;
+    }
+    // Increment the quantity
+    cart[existingProductIndex].quantity++;
+  } else {
+    // Product not in cart, add it with quantity of 1
+    product.quantity = 1;
+    cart.push(product);
+  }
+  
   // Save the updated cart back to localStorage
   setLocalStorage("so-cart", cart);
   // Update the cart count display
@@ -20,10 +36,22 @@ function addProductToCart(product) {
 }
 // add to cart button event handler
 async function addToCartHandler(e) { 
-  const product = await findProductById(e.target.dataset.id); 
+  const product = await findProductById(e.target.dataset.id);
+  
+  // Check if product is already in cart before adding
+  const cart = getLocalStorage("so-cart") || [];
+  const existingProduct = Array.isArray(cart) ? 
+    cart.find(item => item.Id === product.Id) : 
+    (cart.Id === product.Id ? cart : null);
+  
   addProductToCart(product);
-    // Show success message to user
-  alertMessage(`✓ ${product.NameWithoutBrand || product.Name} added to cart!`, false, "success");
+  
+  // Show appropriate success message based on whether the item was added or quantity incremented
+  if (existingProduct) {
+    alertMessage(`✓ ${product.NameWithoutBrand || product.Name} quantity updated in cart!`, false, "success");
+  } else {
+    alertMessage(`✓ ${product.NameWithoutBrand || product.Name} added to cart!`, false, "success");
+  }
 }
 
 // add listener to Add to Cart button

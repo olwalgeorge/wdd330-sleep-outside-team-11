@@ -4,7 +4,10 @@ function calculateCartTotal(cartItems) {
   if (!cartItems || cartItems.length === 0) {
     return 0;
   }
-    return cartItems.reduce((total, item) => total + parseFloat(item.FinalPrice), 0);
+    return cartItems.reduce((total, item) => {
+      const quantity = item.quantity || 1;
+      return total + (parseFloat(item.FinalPrice) * quantity);
+    }, 0);
 }
 
 function renderCartContents() {
@@ -68,12 +71,11 @@ function cartItemTemplate(item) {
       src="${imagePath}"
       alt="${item.Name}"
     />
-  </a>
-  <a href="/product_pages/index.html?product=${item.Id}">
+  </a>  <a href="/product_pages/index.html?product=${item.Id}">
     <h2 class="card__name">${item.Name}</h2>
   </a>
   <p class="cart-card__color">${item.Colors?.[0]?.ColorName || "N/A"}</p>
-  <p class="cart-card__quantity">qty: 1</p>
+  <p class="cart-card__quantity">qty: ${item.quantity || 1}</p>
   <p class="cart-card__price">$${item.FinalPrice}</p>
 </li>`;
 

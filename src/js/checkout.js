@@ -5,7 +5,20 @@ import {
   updateCartCount,
 } from "./utils.mjs";
 import CheckoutProcess from "./CheckoutProcess.mjs.mjs";
+const checkout = new CheckoutProcess();
 
+document
+  .querySelector(".checkout-form")
+  .addEventListener("submit", async (e) => {
+    e.preventDefault();
+    try {
+      const result = await checkout.checkout(e.target);
+      alert("Order placed! Server response: " + JSON.stringify(result));
+      // Optionally redirect or clear cart here
+    } catch (err) {
+      alert("Checkout failed: " + err.message);
+    }
+  });
 // Display order summary from cart items
 function displayOrderSummary() {
   const cartItems = getLocalStorage("so-cart");

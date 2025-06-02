@@ -41,3 +41,53 @@ export function renderListWithTemplate(
   const htmlStrings = list.map(templateFn);
   parentElement.insertAdjacentHTML(position, htmlStrings.join(""));
 }
+
+// Get the number of items in the cart
+export function getCartItemCount() {
+  const cartItems = getLocalStorage("so-cart");
+  return cartItems ? cartItems.length : 0;
+}
+
+// Update the cart count display
+export function updateCartCount() {
+  const cartCountElement = document.getElementById("cart-count");
+  if (cartCountElement) {
+    const count = getCartItemCount();
+    if (count > 0) {
+      cartCountElement.textContent = count;
+      cartCountElement.style.display = "block";
+    } else {
+      cartCountElement.style.display = "none";
+    }
+  }
+}
+
+// render template with data if available
+export function renderWithTemplate(template, parentElement, data, callback) {
+  parentElement.innerHTML = template;
+  if(callback) {
+    callback(data);
+  }
+}
+
+// load template from file
+export async function loadTemplate(path) {
+  const res = await fetch(path);
+  const template = await res.text();
+  return template;
+}
+
+// load and render header and footer
+export async function loadHeaderFooter() {
+  const headerTemplate = await loadTemplate("/partials/header.html");
+  const footerTemplate = await loadTemplate("/partials/footer.html");
+
+  const headerElement = document.querySelector("#main-header");
+  const footerElement = document.querySelector("#main-footer");
+
+  renderWithTemplate(headerTemplate, headerElement);
+  renderWithTemplate(footerTemplate, footerElement);
+  
+  // Update cart count after header is loaded
+  updateCartCount();
+}

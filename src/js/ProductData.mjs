@@ -1,33 +1,20 @@
-// API base URL from environment variable
-const baseURL = import.meta.env.VITE_SERVER_URL;
+const baseURL = "https://wdd330-backend.onrender.com";
 
-function convertToJson(res) {
-  if (res.ok) {
-    return res.json();
-  } else {
-    throw new Error("Bad Response");
-  }
+// Function to fetch product data for a category from the API
+async function fetchProductsByCategory(category = "tents") {
+  const response = await fetch(`${baseURL}/products/search/${category}`);
+  const data = await response.json();
+  return data.Result;
 }
 
-export default class ProductData {
-  constructor() {
-    // Constructor no longer needs category parameter
-  }
-
-  async getData(category) {
-    const response = await fetch(`${baseURL}products/search/${category}`);
-    const data = await convertToJson(response);
-    return data.Result;
-  }
-
-  async findProductById(id) {
-    const response = await fetch(`${baseURL}product/${id}`);
-    const data = await convertToJson(response);
-    return data.Result;
-  }
-}
-
+// Function to find a specific product by id
 export async function findProductById(id) {
-  const dataSource = new ProductData();
-  return await dataSource.findProductById(id);
+  const products = await fetchProductData();
+  return products.find((item) => item.Id === id);
+}
+
+// Function to get a list of products in a category
+export async function getProductsByCategory(category = "tents") {
+  const products = await fetchProductData(category);
+  return products;
 }

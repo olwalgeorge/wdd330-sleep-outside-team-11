@@ -3,6 +3,12 @@ import {
   setLocalStorage,
   loadHeaderFooter,
   updateCartCount,
+} from "./utils.mjs";
+import {
+  getLocalStorage,
+  setLocalStorage,
+  loadHeaderFooter,
+  updateCartCount,
   getParam,
 } from "./utils.mjs";
 import { findProductById } from "./ProductData.mjs";
@@ -31,7 +37,6 @@ function addProductToCart(product) {
   }
   cart.push(product);
   setLocalStorage("so-cart", cart);
-  updateCartCount();
 }
 
 async function addToCartHandler(e) {

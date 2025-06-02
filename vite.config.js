@@ -3,7 +3,7 @@ import { defineConfig } from "vite";
 
 export default defineConfig({
   root: "src/",
-  publicDir: "../public",
+  publicDir: "./public",
   build: {
     outDir: "../dist",
     rollupOptions: {
@@ -12,6 +12,7 @@ export default defineConfig({
         cart: resolve(__dirname, "src/cart/index.html"),
         checkout: resolve(__dirname, "src/checkout/index.html"),
         productDetail: resolve(__dirname, "src/product_pages/index.html"),
+        productListing: resolve(__dirname, "src/product-listing/index.html"),
         product_listing: resolve(__dirname, "src/product_listing/index.html"),
         product: resolve(__dirname, "src/product/index.html"),
       },

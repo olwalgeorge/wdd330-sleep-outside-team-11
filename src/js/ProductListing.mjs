@@ -1,4 +1,3 @@
-// ProductListing.mjs - Module for rendering product lists on index page
 import { getProductsByCategory } from "./ProductData.mjs";
 
 // Known product IDs for the products we currently have detail pages for
@@ -21,28 +20,41 @@ export async function renderProductList(selector, category) {
       return;
     }
 
-    // Clear existing content
-    let html = "";
+    // Show loading indicator
+    element.innerHTML =
+      "<li class='loading-indicator'>Loading products...</li>";
 
-    // Build HTML string for each product
+    // Get all products in the category
+    const products = await getProductsByCategory(category);
+
+    // Clear existing content
+    element.innerHTML = "";
+
+    // Create HTML for each product
     filteredProducts.forEach((product) => {
       // Fix image paths by converting ../images to /images
       const imagePath = product.Image.replace("../images", "/images");
 
-      html += `
+      element.innerHTML += `
         <li class="product-card">
           <a href="product_pages/index.html?product=${product.Id}">
             <img src="${imagePath}" alt="${product.Name}" />
-            <h3 class="card__brand">${product.Brand.Name}</h3>
-            <h2 class="card__name">${product.NameWithoutBrand}</h2>
-            <p class="product-card__price">$${product.FinalPrice}</p>
+            <h3 class="card__brand">${product.Brand?.Name || "Brand"}</h3>
+            <h2 class="card__name">${product.NameWithoutBrand || product.Name}</h2>
+            <div class="product-card__price-container">
+              ${originalPriceDisplay}
+              <p class="product-card__price">$${finalPrice}</p>
+            </div>
           </a>
         </li>
       `;
     });
-
-    element.innerHTML = html;
   } catch (error) {
-    // Error handling silently
+    // Handle error silently without console.error
+    const element = document.querySelector(selector);
+    if (element) {
+      element.innerHTML =
+        "<li class='error-message'>Error loading products. Please try again later.</li>";
+    }
   }
 }

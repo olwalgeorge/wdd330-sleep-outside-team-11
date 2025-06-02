@@ -327,6 +327,108 @@ button {
   position: relative;
 }
 
+
+/* Base form container styling */
+.checkout-form {
+  background-color: #fff; /* White background for form */
+  padding: 2rem; /* Internal spacing */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Subtle shadow for elevation */
+  max-width: 600px; /* Restrict max width for readability */
+  margin: 0 auto; /* Center the form horizontally */
+}
+
+/* Fieldset styling for grouping form sections */
+.checkout-form fieldset {
+  border: none; /* Remove default border */
+  margin-bottom: 2rem; /* Spacing between sections */
+}
+
+/* Legend for section headings */
+.checkout-form legend {
+  font-size: 1.2rem; /* Slightly larger font */
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+/* Form group: wrapper for label and input */
+.form-group {
+  margin-bottom: 1.25rem; /* Space between fields */
+  display: flex;
+  flex-direction: column; /* Stack label and input vertically */
+}
+
+/* Label styling */
+.form-group label {
+  margin-bottom: 0.5rem; /* Space below label */
+  font-weight: 500;
+  color: #333;
+}
+
+/* Input field styling */
+.form-group input {
+  padding: 0.5rem 0.75rem; /* Comfortable padding */
+  font-size: 1rem;
+  border: 1px solid #ccc; /* Light gray border */
+  border-radius: 6px; /* Rounded corners */
+  transition: border-color 0.3s ease; /* Smooth transition on focus */
+}
+
+/* Input field focus state */
+.form-group input:focus {
+  border-color: #007BFF; /* Highlighted border on focus */
+  outline: none; /* Remove default blue outline */
+}
+
+/* Submit button styling */
+.checkout-button {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  background-color: #007BFF; /* Primary blue color */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+.checkout-button:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+}
+
+/* Checkout Process*/
+.order-calculations {
+  border-top: 1px solid var(--light-grey);
+  margin-top: 1rem;
+  padding-top: 1rem;
+}
+
+.order-calculations p {
+  display: flex;
+  justify-content: space-between;
+  margin: 0.5rem 0;
+  padding: 0.25rem 0;
+}
+
+.subtotal-line,
+.tax-line,
+.shipping-line {
+  color: var(--dark-grey);
+  font-size: 0.9rem;
+}
+
+.order-total {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: var(--tertiary-color);
+  border-top: 1px solid var(--light-grey);
+  padding-top: 0.5rem !important;
+  margin-top: 0.5rem !important;
+}
+
+
 @media screen and (min-width: 500px) {
   body {
     max-width: 1080px;

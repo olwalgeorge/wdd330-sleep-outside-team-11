@@ -1,4 +1,4 @@
-import { findProductById } from "./ProductData.mjs";
+import { findProductById } from "./ExternalServices.mjs";
 import { getParam } from "./utils.mjs";
 
 export async function renderProductDetails() {
@@ -18,14 +18,20 @@ export async function renderProductDetails() {
 
     // Render the product details in the DOM
     document.getElementById("productName").textContent = product.Name;
+<<<<<<< HEAD
     document.getElementById("productNameWithoutBrand").textContent =
       product.NameWithoutBrand || "";
 
+=======
+    document.getElementById("productNameWithoutBrand").textContent = product.NameWithoutBrand || "";
+    
+>>>>>>> d67fb3abc8266d1ae029c39b3d4ccb4e6dc94f21
     // Handle different image formats from the API
     let imagePath = product.Images?.PrimaryLarge || product.Image;
     if (imagePath && imagePath.includes("../images")) {
       imagePath = imagePath.replace("../images", "/images");
     }
+<<<<<<< HEAD
 
     document.getElementById("productImage").src = imagePath;
     document.getElementById("productImage").alt = product.Name;
@@ -36,12 +42,70 @@ export async function renderProductDetails() {
     document.getElementById("productDescriptionHtml").innerHTML =
       product.DescriptionHtml;
 
+=======
+    
+    document.getElementById("productImage").src = imagePath;
+    document.getElementById("productImage").alt = product.Name;
+    
+    // Check if product is discounted (FinalPrice < SuggestedRetailPrice)
+    const isDiscounted = product.FinalPrice < product.SuggestedRetailPrice;
+    
+    if (isDiscounted) {
+      // Create a price container div to hold both prices
+      const priceContainer = document.createElement("div");
+      priceContainer.className = "product-detail__price-container";
+      
+      // Create and add the original price element
+      const originalPrice = document.createElement("p");
+      originalPrice.className = "product-card__original-price";
+      originalPrice.textContent = `$${product.SuggestedRetailPrice.toFixed(2)}`;
+      priceContainer.appendChild(originalPrice);
+      
+      // Create and add the final price element
+      const finalPrice = document.createElement("p");
+      finalPrice.className = "product-card__price";
+      finalPrice.textContent = `$${product.FinalPrice.toFixed(2)}`;
+      priceContainer.appendChild(finalPrice);
+      
+      // Create discount badge
+      const discountAmount = product.SuggestedRetailPrice - product.FinalPrice;
+      const discountPercentage = Math.round((discountAmount / product.SuggestedRetailPrice) * 100);
+      const discountBadge = document.createElement("div");
+      discountBadge.className = "discount-badge product-detail__discount-badge";
+      discountBadge.textContent = `Save ${discountPercentage}% ($${discountAmount.toFixed(2)})`;
+      
+      // Get the original price element and replace it with our container
+      const priceElement = document.getElementById("productFinalPrice");
+      priceElement.replaceWith(priceContainer);
+      
+      // Add the discount badge to the product detail section
+      const productDetailSection = document.querySelector(".product-detail");
+      productDetailSection.insertBefore(discountBadge, document.getElementById("productImage"));
+    } else {
+      // No discount, just show the final price
+      document.getElementById("productFinalPrice").textContent = `$${product.FinalPrice.toFixed(2)}`;
+    }
+    
+    // Handle color display if available
+    if (product.Colors && product.Colors.length > 0) {
+      document.getElementById("productColorName").textContent = product.Colors[0].ColorName;
+    } else {
+      document.getElementById("productColorName").textContent = "";
+    }
+    
+    document.getElementById("productDescriptionHtml").innerHTML = product.DescriptionHtml || product.Description || "";
+    
+>>>>>>> d67fb3abc8266d1ae029c39b3d4ccb4e6dc94f21
     // Set the product ID for the "Add to Cart" button
     document.getElementById("addToCart").setAttribute("data-id", product.Id);
 
     // Update the page title
-    document.title = `Sleep Outside | ${product.Name}`;
-  } catch (error) {
-    // Error handling without console.error
+    document.title = `Sleep Outside | ${product.Name}`;  } catch (error) {
+    // Handle error silently without console.error
+    // Display an error message on the page
+    const errorElement = document.createElement("p");
+    errorElement.classList.add("error-message");
+    errorElement.textContent = "We're sorry, there was an error loading this product.";
+    document.querySelector(".product-detail").appendChild(errorElement);
   }
 }

@@ -1,96 +1,137 @@
 import {
   loadHeaderFooter,
   getLocalStorage,
-  formatCurrency,
   updateCartCount,
+  alertMessage,
 } from "./utils.mjs";
-import CheckoutProcess from "./CheckoutProcess.mjs.mjs";
-const checkout = new CheckoutProcess();
+import CheckoutProcess from "./CheckoutProcess.mjs";
 
-document
-  .querySelector(".checkout-form")
-  .addEventListener("submit", async (e) => {
-    e.preventDefault();
-    try {
-      const result = await checkout.checkout(e.target);
-      alert("Order placed! Server response: " + JSON.stringify(result));
-      // Optionally redirect or clear cart here
-    } catch (err) {
-      alert("Checkout failed: " + err.message);
-    }
-  });
-// Display order summary from cart items
+// Initialize CheckoutProcess
+const checkout = new CheckoutProcess("so-cart", ".order-summary");
+
+// Display order summary from cart items using CheckoutProcess
 function displayOrderSummary() {
-  const cartItems = getLocalStorage("so-cart");
-  const orderSummaryElement = document.querySelector(".order-summary");
+  checkout.init();
+  checkout.calculateOrderTotal();
+}
 
-  // If there's no element for order summary yet, we're not showing it
-  if (!orderSummaryElement || !cartItems || cartItems.length === 0) {
-    return;
+// Format credit card number with spaces
+function formatCardNumber(value) {
+  const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+  const matches = v.match(/\d{4,16}/g);
+  const match = (matches && matches[0]) || "";
+  const parts = [];
+
+  for (let i = 0, len = match.length; i < len; i += 4) {
+    parts.push(match.substring(i, i + 4));
   }
 
-  // Calculate total
-  const total = cartItems.reduce(
-    (sum, item) => sum + parseFloat(item.FinalPrice),
-    0,
-  );
+  if (parts.length) {
+    return parts.join(" ");
+  } else {
+    return v;
+  }
+}
 
-  // Build the order summary HTML
-  let summaryHTML = "<h3>Order Summary</h3><ul>";
+// Format expiration date
+function formatExpiration(value) {
+  const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+  if (v.length >= 2) {
+    return v.substring(0, 2) + "/" + v.substring(2, 4);
+  }
+  return v;
+}
 
-  cartItems.forEach((item) => {
-    // Fix image paths if needed
-    let imagePath = item.Images?.PrimarySmall || item.Image;
-    if (imagePath && imagePath.includes("../images")) {
-      imagePath = imagePath.replace("../images", "/images");
-    }
+// Add input formatting listeners
+function addInputFormatting() {
+  const cardNumberInput = document.querySelector("#cardNumber");
+  const expirationInput = document.querySelector("#expiration");
+  const zipInput = document.querySelector("#zip");
 
-    summaryHTML += `
-      <li class="summary-item">
-        <img src="${imagePath}" alt="${item.Name}" width="30">
-        <span>${item.Name}</span>
-        <span>$${item.FinalPrice}</span>
-      </li>
-    `;
-  });
+  if (cardNumberInput) {
+    cardNumberInput.addEventListener("input", (e) => {
+      e.target.value = formatCardNumber(e.target.value);
+    });
+  }
 
-  summaryHTML += `</ul><p class="order-total">Total: ${formatCurrency(total)}</p>`;
-  orderSummaryElement.innerHTML = summaryHTML;
+  if (expirationInput) {
+    expirationInput.addEventListener("input", (e) => {
+      e.target.value = formatExpiration(e.target.value);
+    });
+  }
+
+  // Add zip code event listener to trigger order total calculation
+  if (zipInput) {
+    zipInput.addEventListener("blur", () => {
+      checkout.calculateOrderTotal();
+    });
+  }
+}
+
+// Handle form submission
+function handleFormSubmission() {
+  const form = document.querySelector("#checkout-form");
+
+  if (form) {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // Check form validity before proceeding
+      const isValid = form.checkValidity();
+      if (!isValid) {
+        form.reportValidity();
+        return;
+      }
+      const cartItems = getLocalStorage("so-cart");
+      if (!cartItems || cartItems.length === 0) {
+        alertMessage(
+          "Your cart is empty! Please add some items before checking out.",
+        );
+        return;
+      }
+      try {
+        // Submit order using CheckoutProcess and ExternalServices
+        // Pass the form element directly to the checkout method
+        const result = await checkout.checkout(form);
+
+        // Clear cart on successful submission
+        localStorage.removeItem("so-cart");
+        updateCartCount();
+
+        // Store order result for success page (optional)
+        if (result && result.orderId) {
+          localStorage.setItem("lastOrderId", result.orderId);
+        }
+
+        // Redirect to success page
+        window.location.href = "/checkout/success.html";
+      } catch (error) {
+        // Enhanced error handling - show detailed error messages
+        let errorMessage = "There was an error submitting your order.";
+
+        if (error.name === "servicesError" && error.message) {
+          // Server returned detailed error information
+          if (typeof error.message === "object") {
+            // Handle object error messages from server
+            errorMessage =
+              error.message.message || JSON.stringify(error.message);
+          } else {
+            errorMessage = error.message;
+          }
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+
+        alertMessage(`Error submitting order: ${errorMessage}`);
+      }
+    });
+  }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   loadHeaderFooter();
   displayOrderSummary();
-  // Update cart count
+  addInputFormatting();
+  handleFormSubmission();
   updateCartCount();
-});
-
-let checkoutProcess;
-
-document.addEventListener("DOMContentLoaded", () => {
-  loadHeaderFooter();
-  updateCartCount();
-
-  // Initialize checkout process
-  checkoutProcess = new CheckoutProcess();
-
-  // Calculate and display item summary when page loads
-  checkoutProcess.calculateItemSummary();
-
-  // Add event listener for zip code field to trigger total calculation
-  const zipField = document.querySelector('input[name="zip"]');
-  if (zipField) {
-    zipField.addEventListener("blur", () => {
-      if (zipField.value.trim() !== "") {
-        checkoutProcess.calculateOrdertotal();
-      }
-    });
-
-    // Also trigger on input for real-time updates
-    zipField.addEventListener("input", () => {
-      if (zipField.value.trim().length >= 5) {
-        checkoutProcess.calculateOrdertotal();
-      }
-    });
-  }
 });
